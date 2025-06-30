@@ -9,6 +9,7 @@ theme = "PaperMod"
   disableDarkMode = false
   mainSections = ["writeups", "projects", "research"]
   showReadingTime = true
+  relativeURLs = true
 
 [markup]
   [markup.highlight]
