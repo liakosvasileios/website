@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>Networking on Vasilis&#39; Security Notes</title>
-    <link>http://localhost:1313/tags/networking/</link>
+    <link>https://vasilis-security-notes.vercel.app/tags/networking/</link>
     <description>Recent content in Networking on Vasilis&#39; Security Notes</description>
     <generator>Hugo -- 0.147.9</generator>
     <language>en-us</language>
     <lastBuildDate>Sat, 23 Nov 2024 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://localhost:1313/tags/networking/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://vasilis-security-notes.vercel.app/tags/networking/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>bombadblocker</title>
-      <link>http://localhost:1313/projects/bombadblocker/</link>
+      <link>https://vasilis-security-notes.vercel.app/projects/bombadblocker/</link>
       <pubDate>Sat, 23 Nov 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/projects/bombadblocker/</guid>
+      <guid>https://vasilis-security-notes.vercel.app/projects/bombadblocker/</guid>
       <description>An adblocker for linux in python.</description>
     </item>
   </channel>

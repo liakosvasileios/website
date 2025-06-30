@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>AVX THROTTLING | Vasilis&#39; Security Notes</title>
+<meta name="keywords" content="CPU, hardware">
+<meta name="description" content="Thoughts about exploiting AVX-induced frequency throttling behavior">
+<meta name="author" content="Vasilis">
+<link rel="canonical" href="https://vasilis-security-notes.vercel.app/research/avx-throttling/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.36819bea596090d8b48cf10d9831382996197aa7e4fc86f792f7c08c9ca4d23b.css" integrity="sha256-NoGb6llgkNi0jPENmDE4KZYZeqfk/Ib3kvfAjJyk0js=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://vasilis-security-notes.vercel.app/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://vasilis-security-notes.vercel.app/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://vasilis-security-notes.vercel.app/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://vasilis-security-notes.vercel.app/apple-touch-icon.png">
+<link rel="mask-icon" href="https://vasilis-security-notes.vercel.app/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="https://vasilis-security-notes.vercel.app/research/avx-throttling/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:url" content="https://vasilis-security-notes.vercel.app/research/avx-throttling/">
+  <meta property="og:site_name" content="Vasilis&#39; Security Notes">
+  <meta property="og:title" content="AVX THROTTLING">
+  <meta property="og:description" content="Thoughts about exploiting AVX-induced frequency throttling behavior">
+  <meta property="og:locale" content="en-us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="research">
+    <meta property="article:published_time" content="2025-06-30T00:00:00+00:00">
+    <meta property="article:modified_time" content="2025-06-30T00:00:00+00:00">
+    <meta property="article:tag" content="CPU">
+    <meta property="article:tag" content="Hardware">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="AVX THROTTLING">
+<meta name="twitter:description" content="Thoughts about exploiting AVX-induced frequency throttling behavior">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Researches",
+      "item": "https://vasilis-security-notes.vercel.app/research/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "AVX THROTTLING",
+      "item": "https://vasilis-security-notes.vercel.app/research/avx-throttling/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "AVX THROTTLING",
+  "name": "AVX THROTTLING",
+  "description": "Thoughts about exploiting AVX-induced frequency throttling behavior",
+  "keywords": [
+    "CPU", "hardware"
+  ],
+  "articleBody": " AVX-induced frequency throttling behavior could potentially be exploited as a side-channel attack vector Background on AVX Frequency Throttling On Intel Skylake and newer CPUs, executing wide AVX2 (256-bit) or AVX-512 (512-bit) instructions causes the CPU to throttle down its frequency, even when thermal/power limits aren’t reached. This happens to avoid instability due to voltage droop, and the throttling is:\nInstruction-dependent Thread-specific Time-sensitive Potential Exploit Mechanism This behavior introduces a measurable timing side effect based on:\nThe type of instructions executed How often they’re executed Whether throttling occurs This makes it observable by other processes or threads, even without privileged access.\nThis could be used in a side channel as follows:\nVictim executes AVX-512-heavy instructions -\u003e causes CPU to enter a lower turbo bin (L2). Attacker co-located on same physical core (different logical thread) observes a drop in performance due to reduced shared core frequency. By timing specific operations, the adversery can infer: If AVX-512 instructions were being run. Potentially, what kind of data was being processed (if it correlates with AVX usage). Maybe even narrow down specific code paths taken by the victim. This is similar in concept to:\nFlush+Reload or Prime+Probe cache attacks. Branch predictor timing attacks Power-based side channels But instead of cache or branch predictors, it’s using dynamic frequency scaling as the source of leakage.\nSecurity Impact This attack requires core co-residency (i.e., sharing a core via SMT/Hyper-Threading). It’s less granular than Spectre/Meltdown because it leaks coarse information (frequency, not memory content). But it can be used in combined attacks or side-channel amplifiers, especially for detecting: AVX usage in cryptographic code. Specific workloads running in secure enclaves (e.g., Intel SGX) Known Research “Hertzbleed: Turning Power Side-Channel Attacks Into Remote Timing Attacks on x86” Reference AVX Spectre: Leaking Data through AVX Frequency Scaling\" Reference “PLATYPUS” attack (Leveraged energy measurement registers (RAPL) to observe power behavior of victim code). Mitigations Disable AVX-512 support in BIOS (common in cloud environments). SMT mitigation: Use core pinning or disable Hyper-Threading to prevent attacker-victim co-location. Noise injection or core isolation for sensitive tasks. Intel could (and sometimes does) apply microcode patches to reduce observability or make transitions more deterministic. AVX-induced throttling as a potentialaid in exploiting speculative execution or beanch prediction Indirectly, as it would not be the primary mechanism for such an exploit like in Spectre or Meltdown.\nWhat Spectre/Meltdown Rely On Spectre and Meltdown fundamentally exploit:\nSpeculative execution: CPU executes ahead-of-time to gain performance. Mispredicted branches: Speculation can be steered into attacker-controlled code paths. Side channels (e.g., cache timing): Used to observe microarchitectural effects of speculation (e.g., which cache lines were loaded). These attacks leak data that should not be architecturally accessible. Where AVX Frequency Throttling Comes In AVX throttling:\nIs not speculative Does not bypass privilege checks Has low resolution (multi-microsecond granularity) Is instruction-pattern triggered, not data-dependent So, it cannot directly be used to:\nForce speculative execution Influence branch predictor state Read memory bypassing perimissions BUT, it can still help in:\nPossible Roles in a Speculative Execution Attack Covert Channel Enhancement If two processes (e.g., attacker and victim) are colluding or co-resident: AVX throttling can be used as a signal mechanism, where one process modulates CPU frequency through AVX instructions, and another detects it via timing. This can exfiltrate secret data leaked speculatively and stored in a register (rather than memory/cache). Speculation Suppression Timing Oracle AVX throttling may affect timing of speculative execution paths: The attacker might use AVX instructions to slow down execution of certain instructions or flush the pipeline more often. This could serve as a timing oracle, helping determine if speculation occurred or not. Improved Branch Predictor Side Channels If a branch predictor is being attacked (e.g., Spectre v1-style), and you want to infer which code path was speculatively taken: You could time how long it takes for the victim to recover from AVX throttling (if you suspect they used AVX in the speculative path). This could offer indirect confirmation that speculation went through a path involving AVX instructions. Hypothetical Example Scenario Imagine you craft a Spectre v1 gadget that speculatively runs AVX-512 instructions only if a secret bit is 1. Then:\nIf the bit is 1 -\u003e CPU enters AVX-512 throttled state -\u003e attacker sees performance drop on co-located core. If the bit is 0 -\u003e no AVX -\u003e no throttling -\u003e attacker sees normal speed. This creates a bit-leaking side channel based on speculative AVX-induced frequency transitions. This has actually been proposed in the “AVX Spectre” paper (2021), where speculative execution is used to induce throttling, and timing is observed externally.\nTL;DR AVX frequency throttling can act as a low-resolution timing side channel, which might be exploited similarly to cache timing attacks—especially if the attacker shares a physical core with the victim. While not as powerful as Spectre/Meltdown, it adds to the arsenal of side-channel vectors and could help fingerprint or infer workload behavior. Also, AVX throttling can be abused in conjunction with speculative execution, especially to:\nObserve side effects of speculation\nBuild new kinds of covert/co-resident channels\nEnhance traditional Spectre-type attacks with new timing oracles\nBut it is not a standalone speculative execution exploit like Spectre/Meltdown. It acts as a side-channel amplifier or observer.\n",
+  "wordCount" : "860",
+  "inLanguage": "en",
+  "datePublished": "2025-06-30T00:00:00Z",
+  "dateModified": "2025-06-30T00:00:00Z",
+  "author":{
+    "@type": "Person",
+    "name": "Vasilis"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://vasilis-security-notes.vercel.app/research/avx-throttling/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Vasilis' Security Notes",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://vasilis-security-notes.vercel.app/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://vasilis-security-notes.vercel.app/" accesskey="h" title="Vasilis&#39; Security Notes (Alt + H)">Vasilis&#39; Security Notes</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://vasilis-security-notes.vercel.app/projects/" title="Projects">
+                    <span>Projects</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://vasilis-security-notes.vercel.app/research/" title="Research">
+                    <span>Research</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://vasilis-security-notes.vercel.app/writeups/" title="Writeups">
+                    <span>Writeups</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      AVX THROTTLING
+    </h1>
+    <div class="post-description">
+      Thoughts about exploiting AVX-induced frequency throttling behavior
+    </div>
+    <div class="post-meta"><span title='2025-06-30 00:00:00 +0000 UTC'>June 30, 2025</span>&nbsp;·&nbsp;5 min&nbsp;·&nbsp;Vasilis
+
+</div>
+  </header> 
+  <div class="post-content"><hr>
+<h1 id="avx-induced-frequency-throttling-behavior-could-potentially-be-exploited-as-a-side-channel-attack-vector">AVX-induced frequency throttling behavior could potentially be exploited as a side-channel attack vector<a hidden class="anchor" aria-hidden="true" href="#avx-induced-frequency-throttling-behavior-could-potentially-be-exploited-as-a-side-channel-attack-vector">#</a></h1>
+<hr>
+<h2 id="background-on-avx-frequency-throttling">Background on AVX Frequency Throttling<a hidden class="anchor" aria-hidden="true" href="#background-on-avx-frequency-throttling">#</a></h2>
+<p>On Intel Skylake and newer CPUs, executing wide AVX2 (256-bit) or AVX-512 (512-bit) instructions causes the CPU to throttle down its frequency, even when thermal/power limits aren’t reached. This happens to avoid instability due to voltage droop, and the throttling is:</p>
+<ul>
+<li>Instruction-dependent</li>
+<li>Thread-specific</li>
+<li>Time-sensitive</li>
+</ul>
+<hr>
+<h2 id="potential-exploit-mechanism">Potential Exploit Mechanism<a hidden class="anchor" aria-hidden="true" href="#potential-exploit-mechanism">#</a></h2>
+<p>This behavior introduces a measurable timing side effect based on:</p>
+<ul>
+<li>The type of instructions executed</li>
+<li>How often they&rsquo;re executed</li>
+<li>Whether throttling occurs</li>
+</ul>
+<p>This makes it observable by other processes or threads, <strong>even without privileged access</strong>.</p>
+<p>This could be used in a side channel as follows:</p>
+<ol>
+<li>Victim executes AVX-512-heavy instructions -&gt; causes CPU to enter a lower turbo bin (L2).</li>
+<li>Attacker co-located on same physical core (different logical thread) observes a drop in performance due to reduced shared core frequency.</li>
+<li>By timing specific operations, the adversery can infer:
+<ul>
+<li>If AVX-512 instructions were being run.</li>
+<li>Potentially, what kind of data was being processed (if it correlates with AVX usage).</li>
+<li>Maybe even narrow down specific code paths taken by the victim.</li>
+</ul>
+</li>
+</ol>
+<p>This is similar in concept to:</p>
+<ul>
+<li>Flush+Reload or Prime+Probe cache attacks.</li>
+<li>Branch predictor timing attacks</li>
+<li>Power-based side channels</li>
+</ul>
+<p>But instead of cache or branch predictors, it&rsquo;s using dynamic frequency scaling as the source of leakage.</p>
+<hr>
+<h2 id="security-impact">Security Impact<a hidden class="anchor" aria-hidden="true" href="#security-impact">#</a></h2>
+<ul>
+<li>This attack requires core co-residency (i.e., sharing a core via SMT/Hyper-Threading).</li>
+<li>It&rsquo;s less granular than Spectre/Meltdown because it leaks coarse information (frequency, not memory content).</li>
+<li>But it can be used in combined attacks or side-channel amplifiers, especially for detecting:
+<ul>
+<li>AVX usage in cryptographic code.</li>
+<li>Specific workloads running in secure enclaves (e.g., Intel SGX)</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="known-research">Known Research<a hidden class="anchor" aria-hidden="true" href="#known-research">#</a></h2>
+<ul>
+<li>&ldquo;Hertzbleed: Turning Power Side-Channel Attacks
+Into Remote Timing Attacks on x86&rdquo; <a href="https://www.usenix.org/system/files/sec22-wang-yingchen.pdf">Reference</a></li>
+<li>AVX Spectre: Leaking Data through AVX Frequency Scaling&quot; <a href="https://arxiv.org/pdf/2102.06809">Reference</a></li>
+<li>&ldquo;PLATYPUS&rdquo; attack (Leveraged energy measurement registers (RAPL) to observe power behavior of victim code).</li>
+</ul>
+<hr>
+<h2 id="mitigations">Mitigations<a hidden class="anchor" aria-hidden="true" href="#mitigations">#</a></h2>
+<ul>
+<li>Disable AVX-512 support in BIOS (common in cloud environments).</li>
+<li>SMT mitigation: Use core pinning or disable Hyper-Threading to prevent attacker-victim co-location.</li>
+<li>Noise injection or core isolation for sensitive tasks.</li>
+<li>Intel could (and sometimes does) apply microcode patches to reduce observability or make transitions more deterministic.</li>
+</ul>
+<hr>
+<h2 id="avx-induced-throttling-as-a-potentialaid-in-exploiting-speculative-execution-or-beanch-prediction">AVX-induced throttling as a potentialaid in exploiting speculative execution or beanch prediction<a hidden class="anchor" aria-hidden="true" href="#avx-induced-throttling-as-a-potentialaid-in-exploiting-speculative-execution-or-beanch-prediction">#</a></h2>
+<p>Indirectly, as it would not be the primary mechanism for such an exploit like in Spectre or Meltdown.</p>
+<h2 id="what-spectremeltdown-rely-on">What Spectre/Meltdown Rely On<a hidden class="anchor" aria-hidden="true" href="#what-spectremeltdown-rely-on">#</a></h2>
+<p>Spectre and Meltdown fundamentally exploit:</p>
+<ul>
+<li>Speculative execution: CPU executes ahead-of-time to gain performance.</li>
+<li>Mispredicted branches: Speculation can be steered into attacker-controlled code paths.</li>
+<li>Side channels (e.g., cache timing): Used to observe microarchitectural effects of speculation (e.g., which cache lines were loaded).
+These attacks leak data that should not be <strong>architecturally accessible</strong>.</li>
+</ul>
+<h2 id="where-avx-frequency-throttling-comes-in">Where AVX Frequency Throttling Comes In<a hidden class="anchor" aria-hidden="true" href="#where-avx-frequency-throttling-comes-in">#</a></h2>
+<p>AVX throttling:</p>
+<ul>
+<li>Is not speculative</li>
+<li>Does not bypass privilege checks</li>
+<li>Has low resolution (multi-microsecond granularity)</li>
+<li>Is instruction-pattern triggered, not data-dependent</li>
+</ul>
+<p>So, it cannot directly be used to:</p>
+<ul>
+<li>Force speculative execution</li>
+<li>Influence branch predictor state</li>
+<li>Read memory bypassing perimissions</li>
+</ul>
+<p><strong>BUT, it can still help in:</strong></p>
+<h2 id="possible-roles-in-a-speculative-execution-attack">Possible Roles in a Speculative Execution Attack<a hidden class="anchor" aria-hidden="true" href="#possible-roles-in-a-speculative-execution-attack">#</a></h2>
+<ol>
+<li>Covert Channel Enhancement
+If two processes (e.g., attacker and victim) are colluding or co-resident:</li>
+</ol>
+<ul>
+<li>AVX throttling can be used as a signal mechanism, where one process modulates CPU frequency through AVX instructions, and another detects it via timing.</li>
+<li>This can exfiltrate secret data leaked speculatively and stored in a register (rather than memory/cache).</li>
+</ul>
+<ol start="2">
+<li>Speculation Suppression Timing Oracle
+AVX throttling may affect timing of speculative execution paths:</li>
+</ol>
+<ul>
+<li>The attacker might use AVX instructions to slow down execution of certain instructions or flush the pipeline more often.</li>
+<li>This could serve as a timing oracle, helping determine if speculation occurred or not.</li>
+</ul>
+<ol start="3">
+<li>Improved Branch Predictor Side Channels
+If a branch predictor is being attacked (e.g., Spectre v1-style), and you want to infer which code path was speculatively taken:</li>
+</ol>
+<ul>
+<li>You could time how long it takes for the victim to recover from AVX throttling (if you suspect they used AVX in the speculative path).</li>
+<li>This could offer indirect confirmation that speculation went through a path involving AVX instructions.</li>
+</ul>
+<h2 id="hypothetical-example-scenario">Hypothetical Example Scenario<a hidden class="anchor" aria-hidden="true" href="#hypothetical-example-scenario">#</a></h2>
+<p>Imagine you craft a Spectre v1 gadget that speculatively runs AVX-512 instructions only if a secret bit is 1. Then:</p>
+<ul>
+<li>If the bit is 1 -&gt; CPU enters AVX-512 throttled state -&gt; attacker sees performance drop on co-located core.</li>
+<li>If the bit is 0 -&gt; no AVX -&gt; no throttling -&gt; attacker sees normal speed.</li>
+</ul>
+<p>This creates a bit-leaking side channel based on speculative AVX-induced frequency transitions.
+This has actually been proposed in the &ldquo;AVX Spectre&rdquo; paper (2021), where speculative execution is used to induce throttling, and timing is observed externally.</p>
+<h2 id="tldr">TL;DR<a hidden class="anchor" aria-hidden="true" href="#tldr">#</a></h2>
+<p>AVX frequency throttling can act as a low-resolution timing side channel, which might be exploited similarly to cache timing attacks—especially if the attacker shares a physical core with the victim. While not as powerful as Spectre/Meltdown, it adds to the arsenal of side-channel vectors and could help fingerprint or infer workload behavior.
+Also, AVX throttling can be abused in conjunction with speculative execution, especially to:</p>
+<ul>
+<li>
+<p>Observe side effects of speculation</p>
+</li>
+<li>
+<p>Build new kinds of covert/co-resident channels</p>
+</li>
+<li>
+<p>Enhance traditional Spectre-type attacks with new timing oracles</p>
+</li>
+</ul>
+<p><strong>But it is not a standalone speculative execution exploit like Spectre/Meltdown. It acts as a side-channel amplifier or observer.</strong></p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://vasilis-security-notes.vercel.app/tags/cpu/">CPU</a></li>
+      <li><a href="https://vasilis-security-notes.vercel.app/tags/hardware/">Hardware</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://vasilis-security-notes.vercel.app/">Vasilis&#39; Security Notes</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

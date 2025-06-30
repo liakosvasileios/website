@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html lang="en" dir="auto">
 
-<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<head><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="noindex, nofollow">
+<meta name="robots" content="index, follow">
 <title>bombadblocker | Vasilis&#39; Security Notes</title>
 <meta name="keywords" content="security, networking, linux">
 <meta name="description" content="An adblocker for linux in python.">
 <meta name="author" content="Vasilis">
-<link rel="canonical" href="http://localhost:1313/projects/bombadblocker/">
+<link rel="canonical" href="https://vasilis-security-notes.vercel.app/projects/bombadblocker/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.36819bea596090d8b48cf10d9831382996197aa7e4fc86f792f7c08c9ca4d23b.css" integrity="sha256-NoGb6llgkNi0jPENmDE4KZYZeqfk/Ib3kvfAjJyk0js=" rel="preload stylesheet" as="style">
-<link rel="icon" href="http://localhost:1313/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
-<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
-<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<link rel="icon" href="https://vasilis-security-notes.vercel.app/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://vasilis-security-notes.vercel.app/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://vasilis-security-notes.vercel.app/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://vasilis-security-notes.vercel.app/apple-touch-icon.png">
+<link rel="mask-icon" href="https://vasilis-security-notes.vercel.app/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="en" href="http://localhost:1313/projects/bombadblocker/">
+<link rel="alternate" hreflang="en" href="https://vasilis-security-notes.vercel.app/projects/bombadblocker/">
 <noscript>
     <style>
         #theme-toggle,
@@ -55,7 +55,76 @@
         }
 
     </style>
-</noscript>
+</noscript><meta property="og:url" content="https://vasilis-security-notes.vercel.app/projects/bombadblocker/">
+  <meta property="og:site_name" content="Vasilis&#39; Security Notes">
+  <meta property="og:title" content="bombadblocker">
+  <meta property="og:description" content="An adblocker for linux in python.">
+  <meta property="og:locale" content="en-us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="projects">
+    <meta property="article:published_time" content="2024-11-23T00:00:00+00:00">
+    <meta property="article:modified_time" content="2024-11-23T00:00:00+00:00">
+    <meta property="article:tag" content="Security">
+    <meta property="article:tag" content="Networking">
+    <meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="bombadblocker">
+<meta name="twitter:description" content="An adblocker for linux in python.">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Projects",
+      "item": "https://vasilis-security-notes.vercel.app/projects/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "bombadblocker",
+      "item": "https://vasilis-security-notes.vercel.app/projects/bombadblocker/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "bombadblocker",
+  "name": "bombadblocker",
+  "description": "An adblocker for linux in python.",
+  "keywords": [
+    "security", "networking", "linux"
+  ],
+  "articleBody": "DNS Server with DNS-over-HTTPS (DoH) Support and Domain Blocking This project is a DNS server that supports DNS-over-HTTPS (DoH) for secure DNS resolution and allows blocking specific domains, such as ads or malicious websites. The server also caches DNS responses to improve performance and supports multithreading for handling multiple DNS requests concurrently.\nFeatures DNS-over-HTTPS (DoH): The server forwards DNS queries to a DoH server (supports multiple DoH servers including Cloudflare and Google by default) for secure and private DNS resolution. Domain Blocking: The server blocks domains listed in the blocked_list.txt file, returning 0.0.0.0 for blocked domains. Caching: Resolved IP addresses are cached to speed up responses to repeated queries. Cache entries are valid for a configurable time-to-live (TTL). Multithreading: DNS requests are handled in separate threads, allowing the server to process multiple queries concurrently. Configurable Settings: Includes a config.json file where you can specify various settings like cache TTL, the number of workers, and DoH servers. Anti-Phising: Using fuzzing in order to use heuristics to find URLS that are similar to trusted domains. Rate Limiting: The server implements rate limiting to prevent abuse, allowing a configurable number of requests per client IP address. Installation and Setup Prerequisites Python 3.x\nRequired libraries: Install them using the following command:\n```bash pip install dnslib requests rapidfuzz ```\nBlocklist Configuration Create a file named blocked_list.txt in the same directory as the server script. Add one domain per line that you wish to block. Example blocked_list.txt:\n``` example.com ads.example.com tracking.example.net ```\nConfiguration File (config.json) You can configure various settings for the DNS server using the config.json file. If the file is missing or empty, default values will be used.\nmax_workers: The maximum number of threads for handling DNS requests. cache_ttl: Time-to-live (in seconds) for cached DNS responses. blocked_domains_file: Path to the file containing the list of blocked domains. doh_servers: List of DoH servers that the server can randomly select for resolving DNS queries. rate_limit: Maximum number of requests allowed per client IP in the specified time window. time_window: The time window (in seconds) for rate limiting. Usage Clone or download the repository.\nInstall the required Python libraries as mentioned above.\nRun the DNS server with:\n```bash python server.py ```\nThe DNS server will start on the local IP address of the machine on port 53 by default.\nConfiguration Port: The server defaults to port 53. You can change this by modifying the start_dns_server() function call in the script. DoH Server: The script uses Cloudflare’s and Google’s DoH servers. You can add or modify the servers in the config.json file. Example Workflow The server receives a DNS request. It checks if the domain is in the blocklist. If yes, it replies with 0.0.0.0. If the domain is not blocked, the server checks the cache. If a valid cached response exists, it serves the response from the cache. If there is no cached response, the request is forwarded to a randomly selected DoH server for resolution. The response is cached and sent back to the client. Code Structure load_blocked_domains(file_path): Loads the blocked domains from a text file. load_trusted_domains(file_path): Loads the trusted domains from a text file. is_blocked(domain): Checks if a domain is in the blocklist. resolve_from_cache(domain): Checks if a domain’s IP address is cached. cache_response(domain, ip): Caches the response for a domain. query_doh_server(request_data): Sends the DNS query to a DoH server and returns the response. handle_dns_request(data, client_addr, sock): Processes incoming DNS requests, checks the blocklist and cache, and forwards the request to a DoH server if necessary. start_dns_server(host, port): Starts the DNS server on the specified host and port. log_dns_query(domain, client_ip, log_file): Logs DNS queries to a file. is_rate_limited(client_ip): Checks if a client IP has exceeded the rate limit. start_dns_server(host, port): Starts the DNS server on the specified host and port. Troubleshooting OSError: [Errno 98] Address already in use: Make sure no other process is using port 53. ",
+  "wordCount" : "641",
+  "inLanguage": "en",
+  "datePublished": "2024-11-23T00:00:00Z",
+  "dateModified": "2024-11-23T00:00:00Z",
+  "author":{
+    "@type": "Person",
+    "name": "Vasilis"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://vasilis-security-notes.vercel.app/projects/bombadblocker/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Vasilis' Security Notes",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://vasilis-security-notes.vercel.app/favicon.ico"
+    }
+  }
+}
+</script>
 </head>
 
 <body class="" id="top">
@@ -73,7 +142,7 @@
 <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="http://localhost:1313/" accesskey="h" title="Vasilis&#39; Security Notes (Alt + H)">Vasilis&#39; Security Notes</a>
+            <a href="https://vasilis-security-notes.vercel.app/" accesskey="h" title="Vasilis&#39; Security Notes (Alt + H)">Vasilis&#39; Security Notes</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -99,17 +168,17 @@
         </div>
         <ul id="menu">
             <li>
-                <a href="http://localhost:1313/projects/" title="Projects">
+                <a href="https://vasilis-security-notes.vercel.app/projects/" title="Projects">
                     <span>Projects</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/research/" title="Research">
+                <a href="https://vasilis-security-notes.vercel.app/research/" title="Research">
                     <span>Research</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/writeups/" title="Writeups">
+                <a href="https://vasilis-security-notes.vercel.app/writeups/" title="Writeups">
                     <span>Writeups</span>
                 </a>
             </li>
@@ -232,16 +301,16 @@ python server.py
 
   <footer class="post-footer">
     <ul class="post-tags">
-      <li><a href="http://localhost:1313/tags/security/">Security</a></li>
-      <li><a href="http://localhost:1313/tags/networking/">Networking</a></li>
-      <li><a href="http://localhost:1313/tags/linux/">Linux</a></li>
+      <li><a href="https://vasilis-security-notes.vercel.app/tags/security/">Security</a></li>
+      <li><a href="https://vasilis-security-notes.vercel.app/tags/networking/">Networking</a></li>
+      <li><a href="https://vasilis-security-notes.vercel.app/tags/linux/">Linux</a></li>
     </ul>
   </footer>
 </article>
     </main>
     
 <footer class="footer">
-        <span>&copy; 2025 <a href="http://localhost:1313/">Vasilis&#39; Security Notes</a></span> · 
+        <span>&copy; 2025 <a href="https://vasilis-security-notes.vercel.app/">Vasilis&#39; Security Notes</a></span> · 
 
     <span>
         Powered by

@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>Writeups on Vasilis&#39; Security Notes</title>
-    <link>http://localhost:1313/writeups/</link>
+    <link>https://vasilis-security-notes.vercel.app/writeups/</link>
     <description>Recent content in Writeups on Vasilis&#39; Security Notes</description>
     <generator>Hugo -- 0.147.9</generator>
     <language>en-us</language>
     <lastBuildDate>Mon, 30 Jun 2025 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://localhost:1313/writeups/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://vasilis-security-notes.vercel.app/writeups/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Buffer overflow writeup</title>
-      <link>http://localhost:1313/writeups/buffer-overflow/</link>
+      <link>https://vasilis-security-notes.vercel.app/writeups/buffer-overflow/</link>
       <pubDate>Mon, 30 Jun 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/writeups/buffer-overflow/</guid>
+      <guid>https://vasilis-security-notes.vercel.app/writeups/buffer-overflow/</guid>
       <description>&lt;h2 id=&#34;1-overview-of-the-vulnerability&#34;&gt;1. Overview of the Vulnerability&lt;/h2&gt;
 &lt;p&gt;When &lt;strong&gt;readelf&lt;/strong&gt; processes the &lt;code&gt;.comment&lt;/code&gt; section of an ELF, it enters a loop that copies bytes from that section into a fixed‐size, 128‐byte stack buffer named &lt;code&gt;comment[]&lt;/code&gt;. Internally, the code looks roughly like this:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#define MAX_COMMENT 128
@@ -46,9 +46,9 @@
     </item>
     <item>
       <title>RPC Calculator Vulnerability Writeup</title>
-      <link>http://localhost:1313/writeups/rpc-calc-writeup/</link>
+      <link>https://vasilis-security-notes.vercel.app/writeups/rpc-calc-writeup/</link>
       <pubDate>Mon, 30 Jun 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/writeups/rpc-calc-writeup/</guid>
+      <guid>https://vasilis-security-notes.vercel.app/writeups/rpc-calc-writeup/</guid>
       <description>&lt;hr&gt;
 &lt;h2 id=&#34;executive-summary&#34;&gt;Executive Summary&lt;/h2&gt;
 &lt;p&gt;This report identifies and analyzes vulnerabilities found in a socket-based and RPC-powered calculator program implemented in C. The system includes three components:&lt;/p&gt;

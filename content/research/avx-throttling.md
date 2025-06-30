@@ -30,7 +30,7 @@ This behavior introduces a measurable timing side effect based on:
 This makes it observable by other processes or threads, **even without privileged access**.
 
 This could be used in a side channel as follows:
-1. Victim executes AVX-512-heavy instructions → causes CPU to enter a lower turbo bin (L2).
+1. Victim executes AVX-512-heavy instructions -> causes CPU to enter a lower turbo bin (L2).
 2. Attacker co-located on same physical core (different logical thread) observes a drop in performance due to reduced shared core frequency.
 3. By timing specific operations, the adversery can infer:
     - If AVX-512 instructions were being run.
@@ -114,8 +114,8 @@ If a branch predictor is being attacked (e.g., Spectre v1-style), and you want t
 
 ## Hypothetical Example Scenario
 Imagine you craft a Spectre v1 gadget that speculatively runs AVX-512 instructions only if a secret bit is 1. Then:
-- If the bit is 1 → CPU enters AVX-512 throttled state → attacker sees performance drop on co-located core.
-- If the bit is 0 → no AVX → no throttling → attacker sees normal speed.
+- If the bit is 1 -> CPU enters AVX-512 throttled state -> attacker sees performance drop on co-located core.
+- If the bit is 0 -> no AVX -> no throttling -> attacker sees normal speed.
 
 This creates a bit-leaking side channel based on speculative AVX-induced frequency transitions.
     This has actually been proposed in the "AVX Spectre" paper (2021), where speculative execution is used to induce throttling, and timing is observed externally.

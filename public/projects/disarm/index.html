@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html lang="en" dir="auto">
 
-<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<head><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="noindex, nofollow">
+<meta name="robots" content="index, follow">
 <title>DISARM | Vasilis&#39; Security Notes</title>
 <meta name="keywords" content="malware, operating systems, windows, antivirus evasion">
 <meta name="description" content="DISARM: Detection Inhibition via Self-Adaptive Runtime Mutation">
 <meta name="author" content="Vasilis">
-<link rel="canonical" href="http://localhost:1313/projects/disarm/">
+<link rel="canonical" href="https://vasilis-security-notes.vercel.app/projects/disarm/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.36819bea596090d8b48cf10d9831382996197aa7e4fc86f792f7c08c9ca4d23b.css" integrity="sha256-NoGb6llgkNi0jPENmDE4KZYZeqfk/Ib3kvfAjJyk0js=" rel="preload stylesheet" as="style">
-<link rel="icon" href="http://localhost:1313/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
-<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
-<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<link rel="icon" href="https://vasilis-security-notes.vercel.app/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://vasilis-security-notes.vercel.app/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://vasilis-security-notes.vercel.app/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://vasilis-security-notes.vercel.app/apple-touch-icon.png">
+<link rel="mask-icon" href="https://vasilis-security-notes.vercel.app/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="en" href="http://localhost:1313/projects/disarm/">
+<link rel="alternate" hreflang="en" href="https://vasilis-security-notes.vercel.app/projects/disarm/">
 <noscript>
     <style>
         #theme-toggle,
@@ -55,7 +55,77 @@
         }
 
     </style>
-</noscript>
+</noscript><meta property="og:url" content="https://vasilis-security-notes.vercel.app/projects/disarm/">
+  <meta property="og:site_name" content="Vasilis&#39; Security Notes">
+  <meta property="og:title" content="DISARM">
+  <meta property="og:description" content="DISARM: Detection Inhibition via Self-Adaptive Runtime Mutation">
+  <meta property="og:locale" content="en-us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="projects">
+    <meta property="article:published_time" content="2025-05-20T00:00:00+00:00">
+    <meta property="article:modified_time" content="2025-05-20T00:00:00+00:00">
+    <meta property="article:tag" content="Malware">
+    <meta property="article:tag" content="Operating Systems">
+    <meta property="article:tag" content="Windows">
+    <meta property="article:tag" content="Antivirus Evasion">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="DISARM">
+<meta name="twitter:description" content="DISARM: Detection Inhibition via Self-Adaptive Runtime Mutation">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Projects",
+      "item": "https://vasilis-security-notes.vercel.app/projects/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "DISARM",
+      "item": "https://vasilis-security-notes.vercel.app/projects/disarm/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "DISARM",
+  "name": "DISARM",
+  "description": "DISARM: Detection Inhibition via Self-Adaptive Runtime Mutation",
+  "keywords": [
+    "malware", "operating systems", "windows", "antivirus evasion"
+  ],
+  "articleBody": "Overview DISARM (Detection Inhibition via Self-Adaptive Runtime Mutation) is a cutting-edge metamorphic engine designed specifically for 64-bit x86_64 binaries. Unlike traditional polymorphic techniques that rely on encryption or simple obfuscation, DISARM dynamically rewrites machine code at runtime while preserving the program’s original functionality.\nThis project fills a major gap in existing tools, which mostly target outdated 32-bit architectures, by supporting modern 64-bit instruction sets and advanced obfuscation techniques.\nKey Features Custom x86_64 Decoder: Converts variable-length instructions into a normalized intermediate representation (IR) for flexible transformation. Powerful Mutation Pipeline: Uses Mixed Boolean Arithmetic (MBA), instruction substitution, and control flow rewriting to change code structure while maintaining behavior. Safe Reassembler: Generates valid, fully functional x86_64 machine code after transformations. JIT Dispatch Obfuscation: Implements a Just-In-Time obfuscation technique inspired by WebAssembly’s virtual calls, using SIMD registers (XMM/YMM) to hide function call targets dynamically. Round-Trip Testing: Ensures semantic equivalence and binary integrity by simulating and verifying transformed code behavior. Why DISARM? As attackers evolve and detection techniques improve, simple obfuscation and static encryption are no longer enough. DISARM’s approach focuses on:\nContinuous runtime mutation to evade signature-based detection. Obscuring control flow to resist static and symbolic analysis. Maintaining full compatibility with existing binaries without requiring source code or recompilation. Leveraging modern CPU features like AVX instructions and SIMD registers for innovative protection methods. Technical Highlights Supports complex, reversible structural mutations while preserving program semantics. Uses SIMD registers for encrypted virtual call tables, complicating control flow analysis. Modular design allows easy extension with new transformation passes or integration with runtime packers and virtualization. Operates entirely at the binary level, making it applicable to legacy and modern software alike. Applications Advanced software protection against reverse engineering and malware analysis. Offensive security research into evasion techniques. Platform for developing new metamorphic obfuscation and JIT compilation methods. For more technical details or to contribute, feel free to reach out or check the project repository. DISARM\n",
+  "wordCount" : "317",
+  "inLanguage": "en",
+  "datePublished": "2025-05-20T00:00:00Z",
+  "dateModified": "2025-05-20T00:00:00Z",
+  "author":{
+    "@type": "Person",
+    "name": "Vasilis"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://vasilis-security-notes.vercel.app/projects/disarm/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Vasilis' Security Notes",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://vasilis-security-notes.vercel.app/favicon.ico"
+    }
+  }
+}
+</script>
 </head>
 
 <body class="" id="top">
@@ -73,7 +143,7 @@
 <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="http://localhost:1313/" accesskey="h" title="Vasilis&#39; Security Notes (Alt + H)">Vasilis&#39; Security Notes</a>
+            <a href="https://vasilis-security-notes.vercel.app/" accesskey="h" title="Vasilis&#39; Security Notes (Alt + H)">Vasilis&#39; Security Notes</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -99,17 +169,17 @@
         </div>
         <ul id="menu">
             <li>
-                <a href="http://localhost:1313/projects/" title="Projects">
+                <a href="https://vasilis-security-notes.vercel.app/projects/" title="Projects">
                     <span>Projects</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/research/" title="Research">
+                <a href="https://vasilis-security-notes.vercel.app/research/" title="Research">
                     <span>Research</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/writeups/" title="Writeups">
+                <a href="https://vasilis-security-notes.vercel.app/writeups/" title="Writeups">
                     <span>Writeups</span>
                 </a>
             </li>
@@ -176,17 +246,17 @@
 
   <footer class="post-footer">
     <ul class="post-tags">
-      <li><a href="http://localhost:1313/tags/malware/">Malware</a></li>
-      <li><a href="http://localhost:1313/tags/operating-systems/">Operating Systems</a></li>
-      <li><a href="http://localhost:1313/tags/windows/">Windows</a></li>
-      <li><a href="http://localhost:1313/tags/antivirus-evasion/">Antivirus Evasion</a></li>
+      <li><a href="https://vasilis-security-notes.vercel.app/tags/malware/">Malware</a></li>
+      <li><a href="https://vasilis-security-notes.vercel.app/tags/operating-systems/">Operating Systems</a></li>
+      <li><a href="https://vasilis-security-notes.vercel.app/tags/windows/">Windows</a></li>
+      <li><a href="https://vasilis-security-notes.vercel.app/tags/antivirus-evasion/">Antivirus Evasion</a></li>
     </ul>
   </footer>
 </article>
     </main>
     
 <footer class="footer">
-        <span>&copy; 2025 <a href="http://localhost:1313/">Vasilis&#39; Security Notes</a></span> · 
+        <span>&copy; 2025 <a href="https://vasilis-security-notes.vercel.app/">Vasilis&#39; Security Notes</a></span> · 
 
     <span>
         Powered by

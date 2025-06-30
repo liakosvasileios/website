@@ -2,72 +2,78 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>http://localhost:1313/research/test/</loc>
+    <loc>https://vasilis-security-notes.vercel.app/research/avx-throttling/</loc>
     <lastmod>2025-06-30T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/binary-exploitation/</loc>
+    <loc>https://vasilis-security-notes.vercel.app/tags/binary-exploitation/</loc>
     <lastmod>2025-06-30T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/buffer-overflow/</loc>
+    <loc>https://vasilis-security-notes.vercel.app/tags/buffer-overflow/</loc>
     <lastmod>2025-06-30T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/writeups/buffer-overflow/</loc>
+    <loc>https://vasilis-security-notes.vercel.app/writeups/buffer-overflow/</loc>
     <lastmod>2025-06-30T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/</loc>
+    <loc>https://vasilis-security-notes.vercel.app/tags/cpu/</loc>
     <lastmod>2025-06-30T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/linux/</loc>
+    <loc>https://vasilis-security-notes.vercel.app/tags/hardware/</loc>
     <lastmod>2025-06-30T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/malware/</loc>
+    <loc>https://vasilis-security-notes.vercel.app/</loc>
     <lastmod>2025-06-30T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/operating-systems/</loc>
+    <loc>https://vasilis-security-notes.vercel.app/tags/linux/</loc>
     <lastmod>2025-06-30T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/research/</loc>
+    <loc>https://vasilis-security-notes.vercel.app/research/</loc>
     <lastmod>2025-06-30T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/rpc/</loc>
+    <loc>https://vasilis-security-notes.vercel.app/tags/rpc/</loc>
     <lastmod>2025-06-30T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/writeups/rpc-calc-writeup/</loc>
+    <loc>https://vasilis-security-notes.vercel.app/writeups/rpc-calc-writeup/</loc>
     <lastmod>2025-06-30T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/</loc>
+    <loc>https://vasilis-security-notes.vercel.app/tags/</loc>
     <lastmod>2025-06-30T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/vulnerability-research/</loc>
+    <loc>https://vasilis-security-notes.vercel.app/tags/vulnerability-research/</loc>
     <lastmod>2025-06-30T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/windows/</loc>
+    <loc>https://vasilis-security-notes.vercel.app/writeups/</loc>
     <lastmod>2025-06-30T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/writeups/</loc>
-    <lastmod>2025-06-30T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/tags/antivirus-evasion/</loc>
+    <loc>https://vasilis-security-notes.vercel.app/tags/antivirus-evasion/</loc>
     <lastmod>2025-05-20T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/projects/disarm/</loc>
+    <loc>https://vasilis-security-notes.vercel.app/projects/disarm/</loc>
     <lastmod>2025-05-20T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/projects/</loc>
+    <loc>https://vasilis-security-notes.vercel.app/tags/malware/</loc>
     <lastmod>2025-05-20T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/projects/priv-esc/</loc>
+    <loc>https://vasilis-security-notes.vercel.app/tags/operating-systems/</loc>
+    <lastmod>2025-05-20T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://vasilis-security-notes.vercel.app/projects/</loc>
+    <lastmod>2025-05-20T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://vasilis-security-notes.vercel.app/tags/windows/</loc>
+    <lastmod>2025-05-20T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://vasilis-security-notes.vercel.app/projects/priv-esc/</loc>
     <lastmod>2024-12-24T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/projects/bombadblocker/</loc>
+    <loc>https://vasilis-security-notes.vercel.app/projects/bombadblocker/</loc>
     <lastmod>2024-11-23T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/networking/</loc>
+    <loc>https://vasilis-security-notes.vercel.app/tags/networking/</loc>
     <lastmod>2024-11-23T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/security/</loc>
+    <loc>https://vasilis-security-notes.vercel.app/tags/security/</loc>
     <lastmod>2024-11-23T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/categories/</loc>
+    <loc>https://vasilis-security-notes.vercel.app/categories/</loc>
   </url>
 </urlset>
