@@ -1,4 +1,4 @@
-baseURL = "https://security-notes-silk.vercel.app/"
+baseURL = "https://vasilis-security-notes.vercel.app/"
 languageCode = "en-us"
 title = "Vasilis' Security Notes"
 theme = "PaperMod"
