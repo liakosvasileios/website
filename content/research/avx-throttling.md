@@ -122,7 +122,7 @@ This creates a bit-leaking side channel based on speculative AVX-induced frequen
 
 ## TL;DR
 
-AVX frequency throttling can act as a low-resolution timing side channel, which might be exploited similarly to cache timing attacks—especially if the attacker shares a physical core with the victim. While not as powerful as Spectre/Meltdown, it adds to the arsenal of side-channel vectors and could help fingerprint or infer workload behavior.
+AVX frequency throttling can act as a low-resolution timing side channel, which might be exploited similarly to cache timing attacks - especially if the attacker shares a physical core with the victim. While not as powerful as Spectre/Meltdown, it adds to the arsenal of side-channel vectors and could help fingerprint or infer workload behavior.
 Also, AVX throttling can be abused in conjunction with speculative execution, especially to:
 
 - Observe side effects of speculation
