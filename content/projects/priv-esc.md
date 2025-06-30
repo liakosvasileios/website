@@ -7,7 +7,7 @@ description = "A priviledge escalation tool for Windows."
 +++
 
 
-# Windows Privilege Elevation Tool
+# [Windows Privilege Elevation Tool](https://github.com/liakosvasileios/trusted-installer-privilege-escalation)
 
 ## Overview
 
