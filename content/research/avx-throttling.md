@@ -1,7 +1,7 @@
 +++
 title = "AVX THROTTLING"
 date = 2025-06-30
-tags = ["malware", "operating systems", "windows"]
+tags = ["CPU", "hardware"]
 description = "Thoughts about exploiting AVX-induced frequency throttling behavior"
 +++
 
