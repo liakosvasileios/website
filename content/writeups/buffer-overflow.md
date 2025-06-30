@@ -208,7 +208,7 @@ After running this script, `exploit.elf` has a `.comment` of size 0x7f whose con
    pwndbg> run
    ```
    You should see:
-   ```
+   ```gdb
    Breakpoint 1, doshn (…) at readelf.c:1510
    ```
 ---
@@ -248,11 +248,11 @@ After running this script, `exploit.elf` has a `.comment` of size 0x7f whose con
    pwndbg> finish
    ```
    GDB prints:
-   ```
-   Run till exit from #0  doshn (…) at readelf.c:1510
-   0x00000000004241f2 in print_flag ()
-   ```
-   
+    ```gdb
+    Run till exit from #0  doshn (…) at readelf.c:1510
+    0x00000000004241f2 in print_flag ()
+    ```
+
    That shows control has transferred to `print_flag` at `0x4241f2`. You have successfully hijacked RIP.
 
 ---
