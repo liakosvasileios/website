@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>DISARM | Vasilis&#39; Security Notes</title>
+<meta name="keywords" content="malware, operating systems, windows, antivirus evasion">
+<meta name="description" content="DISARM: Detection Inhibition via Self-Adaptive Runtime Mutation">
+<meta name="author" content="Vasilis">
+<link rel="canonical" href="//localhost:1313/projects/projects/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.36819bea596090d8b48cf10d9831382996197aa7e4fc86f792f7c08c9ca4d23b.css" integrity="sha256-NoGb6llgkNi0jPENmDE4KZYZeqfk/Ib3kvfAjJyk0js=" rel="preload stylesheet" as="style">
+<link rel="icon" href="//localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="//localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="//localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="//localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="//localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="//localhost:1313/projects/projects/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="//localhost:1313/" accesskey="h" title="Vasilis&#39; Security Notes (Alt + H)">Vasilis&#39; Security Notes</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="//localhost:1313/projects/" title="Projects">
+                    <span>Projects</span>
+                </a>
+            </li>
+            <li>
+                <a href="//localhost:1313/writeups/" title="Writeups">
+                    <span>Writeups</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      DISARM
+    </h1>
+    <div class="post-description">
+      DISARM: Detection Inhibition via Self-Adaptive Runtime Mutation
+    </div>
+    <div class="post-meta"><span title='2025-05-20 00:00:00 +0000 UTC'>May 20, 2025</span>&nbsp;·&nbsp;4 min&nbsp;·&nbsp;Vasilis
+
+</div>
+  </header> 
+  <div class="post-content"><h2 id="overview">Overview<a hidden class="anchor" aria-hidden="true" href="#overview">#</a></h2>
+<p><a href="https://github.com/liakosvasileios/DISARM">DISARM</a> (Detection Inhibition via Self-Adaptive Runtime Mutation) is a cutting-edge metamorphic engine designed specifically for 64-bit x86_64 binaries. Unlike traditional polymorphic techniques that rely on encryption or simple obfuscation, DISARM dynamically rewrites machine code at runtime while preserving the program&rsquo;s original functionality.</p>
+<p>This project fills a major gap in existing tools, which mostly target outdated 32-bit architectures, by supporting modern 64-bit instruction sets and advanced obfuscation techniques.</p>
+<hr>
+<h2 id="key-features">Key Features<a hidden class="anchor" aria-hidden="true" href="#key-features">#</a></h2>
+<ul>
+<li><strong>Custom x86_64 Decoder:</strong> Converts variable-length instructions into a normalized intermediate representation (IR) for flexible transformation.</li>
+<li><strong>Powerful Mutation Pipeline:</strong> Uses Mixed Boolean Arithmetic (MBA), instruction substitution, and control flow rewriting to change code structure while maintaining behavior.</li>
+<li><strong>Safe Reassembler:</strong> Generates valid, fully functional x86_64 machine code after transformations.</li>
+<li><strong>JIT Dispatch Obfuscation:</strong> Implements a Just-In-Time obfuscation technique inspired by WebAssembly&rsquo;s virtual calls, using SIMD registers (XMM/YMM) to hide function call targets dynamically.</li>
+<li><strong>Round-Trip Testing:</strong> Ensures semantic equivalence and binary integrity by simulating and verifying transformed code behavior.</li>
+</ul>
+<hr>
+<h2 id="why-disarm">Why DISARM?<a hidden class="anchor" aria-hidden="true" href="#why-disarm">#</a></h2>
+<p>As attackers evolve and detection techniques improve, simple obfuscation and static encryption are no longer enough. DISARM’s approach focuses on:</p>
+<ul>
+<li>Continuous runtime mutation to evade signature-based detection.</li>
+<li>Obscuring control flow to resist static and symbolic analysis.</li>
+<li>Maintaining full compatibility with existing binaries without requiring source code or recompilation.</li>
+<li>Leveraging modern CPU features like AVX instructions and SIMD registers for innovative protection methods.</li>
+</ul>
+<hr>
+<h2 id="technical-highlights">Technical Highlights<a hidden class="anchor" aria-hidden="true" href="#technical-highlights">#</a></h2>
+<ul>
+<li>Supports complex, reversible structural mutations while preserving program semantics.</li>
+<li>Uses SIMD registers for encrypted virtual call tables, complicating control flow analysis.</li>
+<li>Modular design allows easy extension with new transformation passes or integration with runtime packers and virtualization.</li>
+<li>Operates entirely at the binary level, making it applicable to legacy and modern software alike.</li>
+</ul>
+<hr>
+<h2 id="applications">Applications<a hidden class="anchor" aria-hidden="true" href="#applications">#</a></h2>
+<ul>
+<li>Advanced software protection against reverse engineering and malware analysis.</li>
+<li>Offensive security research into evasion techniques.</li>
+<li>Platform for developing new metamorphic obfuscation and JIT compilation methods.</li>
+</ul>
+<hr>
+<p>For more technical details or to contribute, feel free to reach out or check the project repository.
+<a href="https://github.com/liakosvasileios/DISARM"><em>DISARM</em></a></p>
+<p>+++
+title = &ldquo;Windows Privilege Elevation Tool&rdquo;
+date = 2024-12-24
+github = &ldquo;<a href="https://github.com/liakosvasileios/trusted-installer-privilege-escalation%22">https://github.com/liakosvasileios/trusted-installer-privilege-escalation&quot;</a>
+tags = [&ldquo;malware&rdquo;, &ldquo;operating systems&rdquo;, &ldquo;windows&rdquo;]
+description = &ldquo;A priviledge escalation tool for Windows.&rdquo;
++++</p>
+<h1 id="windows-privilege-elevation-tool">Windows Privilege Elevation Tool<a hidden class="anchor" aria-hidden="true" href="#windows-privilege-elevation-tool">#</a></h1>
+<h2 id="overview-1">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-1">#</a></h2>
+<p>This program is designed to elevate privileges from an administrative account to the <code>NT AUTHORITY\SYSTEM</code> account on Windows systems. It utilizes native NT system calls to interact directly with the operating system, manipulating access tokens and processes to achieve privilege escalation. After obtaining <code>NT AUTHORITY\SYSTEM</code> privileges, it creates a new process under this context and subsequently escalates privileges to the <code>TrustedInstaller</code> user.</p>
+<h2 id="workflow">Workflow<a hidden class="anchor" aria-hidden="true" href="#workflow">#</a></h2>
+<ol>
+<li>Opens the current process&rsquo; access token.</li>
+<li>Sets <code>SE_DEBUG_PRIVILEGE</code>.</li>
+<li>Opens the <code>winlogon.exe</code> process.</li>
+<li>Impersonates the logged user.</li>
+<li>Duplicates <code>winlogon.exe</code>&rsquo;s access token.</li>
+<li>Creates a new process (part two of the program).</li>
+<li>The second PE (Portable Executable):
+<ul>
+<li>Starts the TrustedInstaller service.</li>
+<li>Gets the TrustedInstaller service&rsquo;s PID.</li>
+<li>Retrieves its first thread.</li>
+<li>Impersonates the thread.</li>
+<li>Creates a new process (<code>powershell.exe</code>) under the TrustedInstaller context.</li>
+</ul>
+</li>
+</ol>
+<h2 id="files">Files<a hidden class="anchor" aria-hidden="true" href="#files">#</a></h2>
+<h3 id="1-get_ntcpp">1. <code>get_nt.cpp</code><a hidden class="anchor" aria-hidden="true" href="#1-get_ntcpp">#</a></h3>
+<ul>
+<li>Implements the main logic for privilege escalation to <code>NT AUTHORITY\SYSTEM</code>.</li>
+</ul>
+<h3 id="2-get_nth">2. <code>get_nt.h</code><a hidden class="anchor" aria-hidden="true" href="#2-get_nth">#</a></h3>
+<ul>
+<li>Header file containing definitions, macros, structs, and function prototypes for <code>get_nt.cpp</code>.</li>
+</ul>
+<h3 id="3-get_nt_64asm">3. <code>get_nt_64.asm</code><a hidden class="anchor" aria-hidden="true" href="#3-get_nt_64asm">#</a></h3>
+<ul>
+<li>Assembly code using indirect syscalls to implement low-level NT functions.</li>
+</ul>
+<h3 id="4-get_ticpp">4. <code>get_ti.cpp</code><a hidden class="anchor" aria-hidden="true" href="#4-get_ticpp">#</a></h3>
+<ul>
+<li>Implements the main logic for privilege escalation to the TrustedInstaller user.</li>
+</ul>
+<h3 id="5-get_tih">5. <code>get_ti.h</code><a hidden class="anchor" aria-hidden="true" href="#5-get_tih">#</a></h3>
+<ul>
+<li>Header file containing definitions, macros, structs, and function prototypes for <code>get_ti.cpp</code>.</li>
+</ul>
+<h3 id="6-get_ti_64asm">6. <code>get_ti_64.asm</code><a hidden class="anchor" aria-hidden="true" href="#6-get_ti_64asm">#</a></h3>
+<ul>
+<li>Assembly code using indirect syscalls for low-level NT functions required by <code>get_ti.cpp</code>.</li>
+</ul>
+<blockquote>
+<p>Note: Elevating privileges to <code>NT AUTHORITY\SYSTEM</code> is a prerequisite to starting the Service Manager and TrustedInstaller service.</p></blockquote>
+<h2 id="build-instructions">Build Instructions<a hidden class="anchor" aria-hidden="true" href="#build-instructions">#</a></h2>
+<p>To compile and run the tool:</p>
+<ol>
+<li>Use Visual Studio for C++ files and MASM for the assembly files.</li>
+<li>Compile <code>get_nt.cpp</code>, <code>get_nt.h</code>, and <code>get_nt_64.asm</code> into an executable.</li>
+<li>Similarly, compile <code>get_ti.cpp</code>, <code>get_ti.h</code>, and <code>get_ti_64.asm</code> into a second executable.</li>
+<li>Run the first executable as an administrator.</li>
+</ol>
+<h2 id="warning">Warning<a hidden class="anchor" aria-hidden="true" href="#warning">#</a></h2>
+<p>This tool is intended for <strong>educational purposes only</strong>. Unauthorized use of privilege escalation tools may result in severe legal consequences and violate ethical standards. Ensure you have explicit permission before using this tool on any system.</p>
+<h2 id="license">License<a hidden class="anchor" aria-hidden="true" href="#license">#</a></h2>
+<p>This project is distributed under the GNU General Public License. Refer to the <a href="LICENSE">LICENSE</a> file for details.</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="//localhost:1313/tags/malware/">Malware</a></li>
+      <li><a href="//localhost:1313/tags/operating-systems/">Operating Systems</a></li>
+      <li><a href="//localhost:1313/tags/windows/">Windows</a></li>
+      <li><a href="//localhost:1313/tags/antivirus-evasion/">Antivirus Evasion</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="//localhost:1313/">Vasilis&#39; Security Notes</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

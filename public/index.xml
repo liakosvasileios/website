@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Home on Vasilis&#39; Security Notes</title>
+    <link>//localhost:1313/</link>
+    <description>Recent content in Home on Vasilis&#39; Security Notes</description>
+    <generator>Hugo -- 0.147.9</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 30 Jun 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="//localhost:1313/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>AVX THROTTLING</title>
+      <link>//localhost:1313/research/test/</link>
+      <pubDate>Mon, 30 Jun 2025 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/research/test/</guid>
+      <description>Thoughts about exploiting AVX-induced frequency throttling behavior</description>
+    </item>
+    <item>
+      <title>Buffer overflow writeup</title>
+      <link>//localhost:1313/writeups/buffer-overflow/</link>
+      <pubDate>Mon, 30 Jun 2025 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/writeups/buffer-overflow/</guid>
+      <description>&lt;h2 id=&#34;1-overview-of-the-vulnerability&#34;&gt;1. Overview of the Vulnerability&lt;/h2&gt;
+&lt;p&gt;When &lt;strong&gt;readelf&lt;/strong&gt; processes the &lt;code&gt;.comment&lt;/code&gt; section of an ELF, it enters a loop that copies bytes from that section into a fixed‐size, 128‐byte stack buffer named &lt;code&gt;comment[]&lt;/code&gt;. Internally, the code looks roughly like this:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#define MAX_COMMENT 128
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;char&lt;/span&gt; comment[MAX_COMMENT];
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;int&lt;/span&gt;  version_start &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;, idx &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;char&lt;/span&gt; c;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;/* xsh_offset points to the file‐offset of .comment’s data */&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;while&lt;/span&gt; (&lt;span style=&#34;color:#a6e22e&#34;&gt;pread&lt;/span&gt;(fd, &lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;&lt;/span&gt;c, &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, xsh_offset &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; idx) &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;) {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; (c &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;(&amp;#39;&lt;/span&gt;) {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        version_start &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; idx &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;else&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; (c &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;)&amp;#39;&lt;/span&gt;) {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#66d9ef&#34;&gt;break&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;else&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; (version_start &lt;span style=&#34;color:#f92672&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;) {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#75715e&#34;&gt;/* UNBOUNDED WRITE: */&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        comment[idx &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; version_start] &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; c;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    idx&lt;span style=&#34;color:#f92672&#34;&gt;++&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;comment[idx &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; version_start] &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;\0&amp;#39;&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;file_printf&lt;/span&gt;(ms, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;, os/compiler version =&amp;gt; [%s]&amp;#34;&lt;/span&gt;, comment);
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;comment&lt;/code&gt; is 128 bytes long&lt;/strong&gt;, stored at &lt;code&gt;RBP - 0xF0&lt;/code&gt; through &lt;code&gt;RBP - 0x70&lt;/code&gt; on x86-64.&lt;/li&gt;
+&lt;li&gt;Whenever the code sees a &lt;code&gt;&#39;(&#39;&lt;/code&gt;, it sets &lt;code&gt;version_start = idx + 1&lt;/code&gt;. From that point on, each subsequent byte (up until a &lt;code&gt;&#39;)&#39;&lt;/code&gt;) is written to &lt;code&gt;comment[idx - version_start]&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;There is no bounds check&lt;/strong&gt; on &lt;code&gt;idx - version_start&lt;/code&gt;, so once that expression exceeds 127, writes begin overflowing into adjacent stack memory (locals, saved-RBP, then saved-RIP).&lt;/li&gt;
+&lt;li&gt;As soon as a &lt;code&gt;&#39;)&#39;&lt;/code&gt; is read, the loop breaks and writes a NUL at &lt;code&gt;comment[idx - version_start]&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;By carefully choosing where two &lt;code&gt;&#39;(&#39;&lt;/code&gt; characters appear in the input, we can control &lt;em&gt;exactly&lt;/em&gt; when the code starts writing to &lt;code&gt;comment[0]&lt;/code&gt; and then intentionally overflow beyond offset 127 to overwrite saved-RIP. When &lt;code&gt;doshn&lt;/code&gt; eventually returns, it will pop our crafted return address from the stack.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>RPC Calculator Vulnerability Writeup</title>
+      <link>//localhost:1313/writeups/rpc-calc-writeup/</link>
+      <pubDate>Mon, 30 Jun 2025 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/writeups/rpc-calc-writeup/</guid>
+      <description>&lt;hr&gt;
+&lt;h2 id=&#34;executive-summary&#34;&gt;Executive Summary&lt;/h2&gt;
+&lt;p&gt;This report identifies and analyzes vulnerabilities found in a socket-based and RPC-powered calculator program implemented in C. The system includes three components:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;client.c&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;calc_client.c&lt;/code&gt; (server-side RPC caller)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;calc_server.c&lt;/code&gt; (RPC service implementation)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;While the project functions as intended for vector calculations, it lacks critical input validation, secure communication, and safe memory handling. The vulnerabilities are categorized by severity and accompanied by suggested mitigations.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;vulnerability-summary-table&#34;&gt;Vulnerability Summary Table&lt;/h2&gt;
+&lt;table&gt;
+  &lt;thead&gt;
+      &lt;tr&gt;
+          &lt;th&gt;ID&lt;/th&gt;
+          &lt;th&gt;Component&lt;/th&gt;
+          &lt;th&gt;Issue&lt;/th&gt;
+          &lt;th&gt;Severity&lt;/th&gt;
+          &lt;th&gt;Risk Description&lt;/th&gt;
+      &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+      &lt;tr&gt;
+          &lt;td&gt;V1&lt;/td&gt;
+          &lt;td&gt;client.c&lt;/td&gt;
+          &lt;td&gt;Unchecked return values from &lt;code&gt;scanf&lt;/code&gt;&lt;/td&gt;
+          &lt;td&gt;Medium&lt;/td&gt;
+          &lt;td&gt;May lead to undefined behavior&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;V2&lt;/td&gt;
+          &lt;td&gt;client.c&lt;/td&gt;
+          &lt;td&gt;No lower bound check for vector length&lt;/td&gt;
+          &lt;td&gt;Medium&lt;/td&gt;
+          &lt;td&gt;Could allow negative indexing or zero-size&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;V3&lt;/td&gt;
+          &lt;td&gt;client.c&lt;/td&gt;
+          &lt;td&gt;No validation of &lt;code&gt;recv()&lt;/code&gt; output&lt;/td&gt;
+          &lt;td&gt;Medium&lt;/td&gt;
+          &lt;td&gt;Memory corruption or logic flaws&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;V4&lt;/td&gt;
+          &lt;td&gt;client.c&lt;/td&gt;
+          &lt;td&gt;Unencrypted socket communication&lt;/td&gt;
+          &lt;td&gt;High&lt;/td&gt;
+          &lt;td&gt;Vulnerable to MITM attacks&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;V5&lt;/td&gt;
+          &lt;td&gt;calc_server.c&lt;/td&gt;
+          &lt;td&gt;Static memory reuse in avg/prod&lt;/td&gt;
+          &lt;td&gt;Medium&lt;/td&gt;
+          &lt;td&gt;May cause data races or memory leaks&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;V6&lt;/td&gt;
+          &lt;td&gt;calc_server.c&lt;/td&gt;
+          &lt;td&gt;No sanity limit on vector size&lt;/td&gt;
+          &lt;td&gt;Medium&lt;/td&gt;
+          &lt;td&gt;Integer overflow or DoS&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;V7&lt;/td&gt;
+          &lt;td&gt;calc_client.c&lt;/td&gt;
+          &lt;td&gt;Unvalidated &lt;code&gt;read()&lt;/code&gt; calls&lt;/td&gt;
+          &lt;td&gt;High&lt;/td&gt;
+          &lt;td&gt;Incomplete or corrupted input data&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;V8&lt;/td&gt;
+          &lt;td&gt;calc_client.c&lt;/td&gt;
+          &lt;td&gt;No bounds check on vector size&lt;/td&gt;
+          &lt;td&gt;Medium&lt;/td&gt;
+          &lt;td&gt;Same as V2, but in server&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;V9&lt;/td&gt;
+          &lt;td&gt;calc_client.c&lt;/td&gt;
+          &lt;td&gt;Static results not freed in &lt;code&gt;prod_r_1&lt;/code&gt;&lt;/td&gt;
+          &lt;td&gt;Low&lt;/td&gt;
+          &lt;td&gt;Memory management issue (minor leak)&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;V10&lt;/td&gt;
+          &lt;td&gt;calc_client.c&lt;/td&gt;
+          &lt;td&gt;Missing signal handling&lt;/td&gt;
+          &lt;td&gt;Low&lt;/td&gt;
+          &lt;td&gt;Zombie processes due to unhandled SIGCHLD&lt;/td&gt;
+      &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;detailed-vulnerabilities-and-mitigations&#34;&gt;Detailed Vulnerabilities and Mitigations&lt;/h2&gt;
+&lt;h3 id=&#34;clientc&#34;&gt;client.c&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;V1. Unchecked &lt;code&gt;scanf&lt;/code&gt; Return Values&lt;/strong&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>DISARM</title>
+      <link>//localhost:1313/projects/disarm/</link>
+      <pubDate>Tue, 20 May 2025 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/projects/disarm/</guid>
+      <description>DISARM: Detection Inhibition via Self-Adaptive Runtime Mutation</description>
+    </item>
+    <item>
+      <title>Windows Privilege Elevation Tool</title>
+      <link>//localhost:1313/projects/priv-esc/</link>
+      <pubDate>Tue, 24 Dec 2024 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/projects/priv-esc/</guid>
+      <description>A priviledge escalation tool for Windows.</description>
+    </item>
+    <item>
+      <title>bombadblocker</title>
+      <link>//localhost:1313/projects/bombadblocker/</link>
+      <pubDate>Sat, 23 Nov 2024 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/projects/bombadblocker/</guid>
+      <description>An adblocker for linux in python.</description>
+    </item>
+  </channel>
+</rss>

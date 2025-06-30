@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Researches on Vasilis&#39; Security Notes</title>
+    <link>//localhost:1313/research/</link>
+    <description>Recent content in Researches on Vasilis&#39; Security Notes</description>
+    <generator>Hugo -- 0.147.9</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 30 Jun 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="//localhost:1313/research/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>AVX THROTTLING</title>
+      <link>//localhost:1313/research/test/</link>
+      <pubDate>Mon, 30 Jun 2025 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/research/test/</guid>
+      <description>Thoughts about exploiting AVX-induced frequency throttling behavior</description>
+    </item>
+  </channel>
+</rss>

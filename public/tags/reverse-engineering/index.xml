@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Reverse Engineering on Test Security Notes</title>
+    <link>//localhost:1313/tags/reverse-engineering/</link>
+    <description>Recent content in Reverse Engineering on Test Security Notes</description>
+    <generator>Hugo -- 0.147.9</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 30 Jun 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="//localhost:1313/tags/reverse-engineering/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Windows Privilege Elevation Tool</title>
+      <link>//localhost:1313/projects/priv-esc/</link>
+      <pubDate>Mon, 30 Jun 2025 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/projects/priv-esc/</guid>
+      <description>A tool to analyze suspicious executables for malware behavior.</description>
+    </item>
+  </channel>
+</rss>

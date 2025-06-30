@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>bombadblocker | Vasilis&#39; Security Notes</title>
+<meta name="keywords" content="security, networking, linux">
+<meta name="description" content="An adblocker for linux in python.">
+<meta name="author" content="Vasilis">
+<link rel="canonical" href="//localhost:1313/projects/bombadblocker/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.36819bea596090d8b48cf10d9831382996197aa7e4fc86f792f7c08c9ca4d23b.css" integrity="sha256-NoGb6llgkNi0jPENmDE4KZYZeqfk/Ib3kvfAjJyk0js=" rel="preload stylesheet" as="style">
+<link rel="icon" href="//localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="//localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="//localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="//localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="//localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="//localhost:1313/projects/bombadblocker/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="//localhost:1313/" accesskey="h" title="Vasilis&#39; Security Notes (Alt + H)">Vasilis&#39; Security Notes</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="//localhost:1313/projects/" title="Projects">
+                    <span>Projects</span>
+                </a>
+            </li>
+            <li>
+                <a href="//localhost:1313/research/" title="Research">
+                    <span>Research</span>
+                </a>
+            </li>
+            <li>
+                <a href="//localhost:1313/writeups/" title="Writeups">
+                    <span>Writeups</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      bombadblocker
+    </h1>
+    <div class="post-description">
+      An adblocker for linux in python.
+    </div>
+    <div class="post-meta"><span title='2024-11-23 00:00:00 +0000 UTC'>November 23, 2024</span>&nbsp;·&nbsp;4 min&nbsp;·&nbsp;Vasilis
+
+</div>
+  </header> 
+  <div class="post-content"><h1 id="dns-server-with-dns-over-https-doh-support-and-domain-blocking"><a href="https://github.com/liakosvasileios/bombadblocker">DNS Server with DNS-over-HTTPS (DoH) Support and Domain Blocking</a><a hidden class="anchor" aria-hidden="true" href="#dns-server-with-dns-over-https-doh-support-and-domain-blocking">#</a></h1>
+<p>This project is a DNS server that supports DNS-over-HTTPS (DoH) for secure DNS resolution and allows blocking specific domains, such as ads or malicious websites. The server also caches DNS responses to improve performance and supports multithreading for handling multiple DNS requests concurrently.</p>
+<h2 id="features">Features<a hidden class="anchor" aria-hidden="true" href="#features">#</a></h2>
+<ul>
+<li><strong>DNS-over-HTTPS (DoH):</strong> The server forwards DNS queries to a DoH server (supports multiple DoH servers including Cloudflare and Google by default) for secure and private DNS resolution.</li>
+<li><strong>Domain Blocking:</strong> The server blocks domains listed in the <code>blocked_list.txt</code> file, returning <code>0.0.0.0</code> for blocked domains.</li>
+<li><strong>Caching:</strong> Resolved IP addresses are cached to speed up responses to repeated queries. Cache entries are valid for a configurable time-to-live (TTL).</li>
+<li><strong>Multithreading:</strong> DNS requests are handled in separate threads, allowing the server to process multiple queries concurrently.</li>
+<li><strong>Configurable Settings:</strong> Includes a <code>config.json</code> file where you can specify various settings like cache TTL, the number of workers, and DoH servers.</li>
+<li><strong>Anti-Phising:</strong> Using fuzzing in order to use heuristics to find URLS that are similar to trusted domains.</li>
+<li><strong>Rate Limiting:</strong> The server implements rate limiting to prevent abuse, allowing a configurable number of requests per client IP address.</li>
+</ul>
+<h2 id="installation-and-setup">Installation and Setup<a hidden class="anchor" aria-hidden="true" href="#installation-and-setup">#</a></h2>
+<h3 id="prerequisites">Prerequisites<a hidden class="anchor" aria-hidden="true" href="#prerequisites">#</a></h3>
+<ul>
+<li>
+<p>Python 3.x</p>
+</li>
+<li>
+<p>Required libraries: Install them using the following command:</p>
+<p>```bash
+pip install dnslib requests rapidfuzz
+```</p>
+</li>
+</ul>
+<h3 id="blocklist-configuration">Blocklist Configuration<a hidden class="anchor" aria-hidden="true" href="#blocklist-configuration">#</a></h3>
+<ul>
+<li>Create a file named <code>blocked_list.txt</code> in the same directory as the server script.</li>
+<li>Add one domain per line that you wish to block.</li>
+</ul>
+<p>Example <code>blocked_list.txt</code>:</p>
+<p>```
+example.com
+ads.example.com
+tracking.example.net
+```</p>
+<h3 id="configuration-file-configjson">Configuration File (<code>config.json</code>)<a hidden class="anchor" aria-hidden="true" href="#configuration-file-configjson">#</a></h3>
+<p>You can configure various settings for the DNS server using the <code>config.json</code> file. If the file is missing or empty, default values will be used.</p>
+<ul>
+<li><strong>max_workers</strong>: The maximum number of threads for handling DNS requests.</li>
+<li><strong>cache_ttl</strong>: Time-to-live (in seconds) for cached DNS responses.</li>
+<li><strong>blocked_domains_file</strong>: Path to the file containing the list of blocked domains.</li>
+<li><strong>doh_servers</strong>: List of DoH servers that the server can randomly select for resolving DNS queries.</li>
+<li><strong>rate_limit</strong>: Maximum number of requests allowed per client IP in the specified time window.</li>
+<li><strong>time_window</strong>: The time window (in seconds) for rate limiting.</li>
+</ul>
+<h3 id="usage">Usage<a hidden class="anchor" aria-hidden="true" href="#usage">#</a></h3>
+<ol>
+<li>
+<p>Clone or download the repository.</p>
+</li>
+<li>
+<p>Install the required Python libraries as mentioned above.</p>
+</li>
+<li>
+<p>Run the DNS server with:</p>
+<p>```bash
+python server.py
+```</p>
+</li>
+<li>
+<p>The DNS server will start on the local IP address of the machine on port 53 by default.</p>
+</li>
+</ol>
+<h3 id="configuration">Configuration<a hidden class="anchor" aria-hidden="true" href="#configuration">#</a></h3>
+<ul>
+<li><strong>Port</strong>: The server defaults to port 53. You can change this by modifying the <code>start_dns_server()</code> function call in the script.</li>
+<li><strong>DoH Server</strong>: The script uses Cloudflare&rsquo;s and Google&rsquo;s DoH servers. You can add or modify the servers in the <code>config.json</code> file.</li>
+</ul>
+<h3 id="example-workflow">Example Workflow<a hidden class="anchor" aria-hidden="true" href="#example-workflow">#</a></h3>
+<ol>
+<li>The server receives a DNS request.</li>
+<li>It checks if the domain is in the blocklist. If yes, it replies with <code>0.0.0.0</code>.</li>
+<li>If the domain is not blocked, the server checks the cache. If a valid cached response exists, it serves the response from the cache.</li>
+<li>If there is no cached response, the request is forwarded to a randomly selected DoH server for resolution.</li>
+<li>The response is cached and sent back to the client.</li>
+</ol>
+<h2 id="code-structure">Code Structure<a hidden class="anchor" aria-hidden="true" href="#code-structure">#</a></h2>
+<ul>
+<li><code>load_blocked_domains(file_path)</code>: Loads the blocked domains from a text file.</li>
+<li><code>load_trusted_domains(file_path)</code>: Loads the trusted domains from a text file.</li>
+<li><code>is_blocked(domain)</code>: Checks if a domain is in the blocklist.</li>
+<li><code>resolve_from_cache(domain)</code>: Checks if a domain&rsquo;s IP address is cached.</li>
+<li><code>cache_response(domain, ip)</code>: Caches the response for a domain.</li>
+<li><code>query_doh_server(request_data)</code>: Sends the DNS query to a DoH server and returns the response.</li>
+<li><code>handle_dns_request(data, client_addr, sock)</code>: Processes incoming DNS requests, checks the blocklist and cache, and forwards the request to a DoH server if necessary.</li>
+<li><code>start_dns_server(host, port)</code>: Starts the DNS server on the specified host and port.</li>
+<li><code>log_dns_query(domain, client_ip, log_file)</code>: Logs DNS queries to a file.</li>
+<li><code>is_rate_limited(client_ip)</code>: Checks if a client IP has exceeded the rate limit.</li>
+<li><code>start_dns_server(host, port)</code>: Starts the DNS server on the specified host and port.</li>
+</ul>
+<h2 id="troubleshooting">Troubleshooting<a hidden class="anchor" aria-hidden="true" href="#troubleshooting">#</a></h2>
+<ul>
+<li><strong>OSError: [Errno 98] Address already in use</strong>: Make sure no other process is using port 53.</li>
+</ul>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="//localhost:1313/tags/security/">Security</a></li>
+      <li><a href="//localhost:1313/tags/networking/">Networking</a></li>
+      <li><a href="//localhost:1313/tags/linux/">Linux</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="//localhost:1313/">Vasilis&#39; Security Notes</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>
