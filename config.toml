@@ -1,0 +1,27 @@
+baseURL = "https://vasilis-security-notes.vercel.app/"
+languageCode = "en-us"
+title = "Vasilis' Security Notes"
+theme = "PaperMod"
+
+[params]
+  author = "Vasilis"
+  defaultTheme = "system"
+  disableDarkMode = false
+  mainSections = ["writeups", "projects", "research"]
+  showReadingTime = true
+  relativeURLs = true
+
+[markup]
+  [markup.highlight]
+    style = "monokai"
+
+[menu]
+  [[menu.main]]
+    name = "Writeups"
+    url = "/writeups/"
+  [[menu.main]]
+    name = "Projects"
+    url = "/projects/"
+  [[menu.main]]
+    name = "Research"
+    url = "/research/"
