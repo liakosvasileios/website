@@ -6,21 +6,18 @@ date = 2025-06-30
 
 # Welcome
 
-Hi, I’m **Vasilis**, a passionate cybersecurity enthusiast specializing in malware development, reverse engineering, and creative antivirus evasion methods.
+I'm Vasilis, a low-level security researcher with a focus on malware development, reverse engineering, and creative techniques for evading modern detection systems.
 
-Here you’ll find detailed **writeups**, insightful **security research**, and **open-source projects** focused on real-world applications and advanced techniques.
+This space documents my personal research, technical breakdowns, and tools I've developed - often focused on pushing the limits of static and dynamic analysis.
 
-- Deep dives into malware behavior and analysis.
-- Reverse engineering software.
-- My ongoing personal projects and tools to help security researchers.
+### Topics I work on:
+- Malware behavior analysis and offensive tooling
+- Reverse engineering internals and malware (also obfuscated binaries)
+- Runtime code mutation and evasion strategies
+- Low-level x86_64 systems 
+- Operating systems
 
-### About Me
-
-I thrive on exploring the intricacies of software internals and pushing the boundaries of what’s possible in cybersecurity. When I’m not dissecting code, I’m sharing knowledge to empower others in the security community.
-
-Feel free to browse my writeups or check out my projects to get a sense of my work.
-
-Most notable project? [DISARM](https://github.com/liakosvasileios/DISARM). 
+#### Most notable project? [DISARM](https://github.com/liakosvasileios/DISARM). 
 
 ---
 
