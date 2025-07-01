@@ -16,8 +16,8 @@ This article explores the theoretical and practical role of reiterated and recon
 
 ## 1. Reiterated Logic: A Brief Theoretical Foundation
 At its heart, reiterated logic is about logic operating on logic. We see this idea emerge in several foundational domains:
-- Gödel’s incompleteness theorem relies on arithmetic encoding statements about arithmetic itself, demonstrating self-reference through a formal system.
-- Lambda calculus introduces fixed-point combinators like the Y-combinator, which allow for recursive function definitions using nothing more than functions themselves.
+- [Gödel’s incompleteness theorem](https://en.wikipedia.org/wiki/G%C3%B6del%27s_incompleteness_theorems) relies on arithmetic encoding statements about arithmetic itself, demonstrating self-reference through a formal system.
+- [Lambda calculus](https://en.wikipedia.org/wiki/Lambda_calculus) introduces fixed-point combinators like the Y-combinator, which allow for recursive function definitions using nothing more than functions themselves.
 - In programming, recursive functions and meta-programming techniques let software reason about or transform its own structure.
 
 These examples all involve a system that contains within it the capacity to operate on its own rules or behaviors. Importantly, such logic is often open-ended, reiterative processes can loop or nest indefinitely, constrained only by termination conditions or meta-level guards.
@@ -32,9 +32,9 @@ This is distinct from traditional “branching” logic. A reconfigurable logic 
 
 ## 3. Programming Meets Formal Logic: A Shared Vocabulary
 Programming languages have long borrowed from logic. Through concepts like:
-- The Curry–Howard correspondence, which equates programs with proofs and types with propositions.
-- ependent types, which encode logical properties in the type system.
-- Proof assistants (e.g., Coq, Agda), which generate executable code from logical statements.
+- The [Curry–Howard correspondence](https://en.wikipedia.org/wiki/Curry%E2%80%93Howard_correspondence), which equates programs with proofs and types with propositions.
+- Dependent types, which encode logical properties in the type system.
+- Proof assistants (e.g., [Coq](https://en.wikipedia.org/wiki/Rocq), [Agda](https://en.wikipedia.org/wiki/Agda_(programming_language))), which generate executable code from logical statements.
 
 We now build programs that are logical artifacts and conversely, logic that behaves like programs. This merging of computation and reasoning forms the fertile ground on which systems like DISARM stand.
 
